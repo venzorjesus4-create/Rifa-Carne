@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gran Rifa Parrillera</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Firebase Compat SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
+    <style>
+        @keyframes subtle-glow {
+            0% { box-shadow: 0 0 10px rgba(249, 115, 22, 0.4); border-color: rgba(249, 115, 22, 0.5); }
+            100% { box-shadow: 0 0 25px rgba(234, 179, 8, 0.8); border-color: rgba(234, 179, 8, 1); }
+        }
+        .animate-glow { animation: subtle-glow 2s infinite alternate; border: 1px solid transparent; }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+        .animate-heartbeat { animation: heartbeat 1.5s infinite ease-in-out; }
+
+        @keyframes text-glow-green {
+            0%, 100% { text-shadow: 0 0 5px #22c55e, 0 0 10px #22c55e; }
+            50% { text-shadow: 0 0 15px #4ade80, 0 0 20px #4ade80; }
+        }
+        .text-neon-green { animation: text-glow-green 2s infinite alternate; }
+
+        @keyframes text-glow-gold {
+            0%, 100% { text-shadow: 0 0 5px #eab308, 0 0 10px #eab308; }
+            50% { text-shadow: 0 0 15px #fde047, 0 0 20px #fde047; }
+        }
+        .text-neon-gold { animation: text-glow-gold 2s infinite alternate; }
+
+        @keyframes live-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+        .animate-live { animation: live-blink 1s infinite; }
+
+        @keyframes straight-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+        .animate-flame { display: inline-block; animation: straight-pulse 1.2s infinite ease-in-out; }
+
+        @keyframes occupied-glow {
+            0%, 100% { box-shadow: 0 0 3px rgba(239, 68, 68, 0.2); border-color: rgba(185, 28, 28, 0.5); }
+            50% { box-shadow: 0 0 8px rgba(239, 68, 68, 0.5); border-color: rgba(220, 38, 38, 0.8); }
+        }
+        .occupied-card { animation: occupied-glow 3s infinite; }
+
+        .animate-pulse-slow { animation: heartbeat 2s infinite ease-in-out; }
+        .animate-pulse-med { animation: heartbeat 1s infinite ease-in-out; }
+        .animate-pulse-fast { animation: heartbeat 0.5s infinite ease-in-out; }
+        .animate-pulse-critical { animation: heartbeat 0.2s infinite ease-in-out; }
+
+        .break-words { word-wrap: break-word; overflow-wrap: break-word; hyphens: auto; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-100 font-sans antialiased min-h-screen flex flex-col items-center pb-10">
+
+    <script>
+        // 1. CONEXIÓN A FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyDEAwK-CYAcTRF6Wm_rc7GTvKp2ERKnIAY",
+            authDomain: "rifas-cananea.firebaseapp.com",
+            databaseURL: "https://rifas-cananea-default-rtdb.firebaseio.com", 
+            projectId: "rifas-cananea",
+            storageBucket: "rifas-cananea.firebasestorage.app",
+            messagingSenderId: "685658823595",
+            appId: "1:685658823595:web:4246a4a8ada0b11c0e90ee"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // 2. CONFIGURACIÓN DEL SORTEO
+        const NUMERO_WHATSAPP = "526451109290";
+        const TOTAL_BOLETOS = 200;
+        
+        let boletos = [];
+        let modoAdmin = false;
+        let boletoEnEdicion = null;
+    </script>
+
+    <!-- ENCABEZADO -->
+    <header class="w-full max-w-2xl px-4 pt-8 pb-4 text-center">
+        <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-400 mb-2 uppercase tracking-wide">
+            Gran Rifa Parrillera
+        </h1>
+        <p class="text-gray-400 text-sm mb-4">Valor del boleto: <span class="text-green-400 font-bold">$50 MXN</span></p>
+
+        <!-- TARJETA DEL PREMIO -->
+        <div class="bg-gray-900 rounded-2xl p-6 mb-6 animate-glow relative overflow-hidden">
+            <div class="absolute top-0 right-0 bg-yellow-500 text-gray-900 text-xs font-bold px-3 py-1 rounded-bl-lg">¡TODO EN UNO!</div>
+            <h2 class="text-2xl font-bold text-white mb-4 uppercase tracking-wider">Gran Premio Único</h2>
+            <ul class="text-left space-y-3 mb-4">
+                <li class="flex items-center text-lg"><span class="text-2xl mr-3">🥩</span> <span class="font-semibold text-gray-200">5 kg de Carne para asar</span></li>
+                <li class="flex items-center text-lg"><span class="text-2xl mr-3">🍻</span> <span class="font-semibold text-gray-200">Un 48 de Cerveza</span></li>
+                <li class="flex items-center text-lg"><span class="text-2xl mr-3">💵</span> <span class="font-semibold text-green-400 text-neon-green">$2,000 MXN en efectivo</span></li>
+            </ul>
+            <div class="border-t border-gray-700 pt-3 text-sm text-gray-400 italic">
+                Opcional: Si el ganador lo prefiere, puede elegir llevarse <span class="font-bold text-yellow-500 text-neon-gold">$4,000 MXN en efectivo absoluto.</span>
+            </div>
+        </div>
+
+        <!-- BOTONES DE COMPRA Y REDES -->
+        <div class="flex flex-col sm:flex-row gap-3 mb-4">
+            <a href="https://wa.me/526451109290?text=Hola,%20me%20interesa%20comprar%20un%20boleto%20para%20la%20Gran%20Rifa" target="_blank" rel="noopener noreferrer" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl flex justify-center items-center animate-heartbeat transition-colors shadow-lg shadow-green-500/20">
+                <svg class="w-6 h-6 mr-2 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964.984-3.595c-.607-1.052-.927-2.246-.926-3.468.001-3.825 3.113-6.937 6.937-6.937 3.825 0 6.938 3.112 6.938 6.937 0 3.825-3.113 6.938-6.939 6.938z"/></svg>
+                Comprar en WhatsApp
+            </a>
+            <a href="https://www.facebook.com/share/1GesdvKuki/" target="_blank" rel="noopener noreferrer" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl flex justify-center items-center transition-colors shadow-lg shadow-blue-600/20">
+                <svg class="w-6 h-6 mr-2 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                Página de Facebook
+            </a>
+        </div>
+
+        <!-- AVISOS IMPORTANTES -->
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-3 flex items-start text-left shadow-lg">
+            <div class="mt-1 mr-3 flex-shrink-0 relative flex items-center justify-center">
+                <span class="animate-live absolute w-3 h-3 bg-red-500 rounded-full"></span>
+                <span class="w-2 h-2 bg-red-600 rounded-full relative"></span>
+            </div>
+            <p class="text-sm text-gray-300 leading-relaxed">
+                El sorteo se realizará <strong class="text-white">EN VIVO</strong>. Al adquirir tu boleto, serás agregado a nuestro <strong class="text-green-400">grupo exclusivo de WhatsApp</strong> donde podrás seguir de cerca el sorteo y enterarte de futuras rifas.
+            </p>
+        </div>
+        
+        <div class="bg-gray-900/80 border border-orange-900/30 rounded-xl p-4 mb-6 shadow-[inset_0_0_20px_rgba(249,115,22,0.05)] text-center">
+            <h3 class="text-orange-500 font-bold mb-1 flex items-center justify-center gap-2">
+                ¡Ayúdanos a llegar a la meta! <span class="animate-flame text-lg">🔥</span>
+            </h3>
+            <p class="text-sm text-gray-400">
+                Entre más rápido se vendan los boletos, más pronto haremos el gran sorteo. ¡Comparte esta página con tus amigos y familiares!
+            </p>
+        </div>
+
+        <!-- CONTADORES -->
+        <div class="bg-gray-900 rounded-xl p-4 flex justify-between items-center mb-6">
+            <div class="text-center w-1/2 border-r border-gray-700">
+                <p class="text-sm text-gray-400 font-semibold uppercase">Quedan</p>
+                <p id="boletosFaltantes" class="text-4xl font-black text-orange-500 animate-pulse-slow">200</p>
+            </div>
+            <div class="text-center w-1/2">
+                <p class="text-sm text-gray-400 font-semibold uppercase">Ocupados</p>
+                <p id="boletosOcupados" class="text-4xl font-black text-white">0</p>
+            </div>
+        </div>
+        
+        <!-- BUSCADOR -->
+        <div class="relative mb-6">
+            <input type="text" id="buscador" autocomplete="off" autocorrect="off" spellcheck="false" onkeyup="filtrarBoletos()" placeholder="Busca tu nombre o número..." class="w-full bg-gray-900 text-white text-base border border-gray-700 rounded-xl py-3 px-4 focus:outline-none focus:border-orange-500 placeholder-gray-500 transition-colors">
+            <svg class="absolute right-3 top-3.5 h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </div>
+    </header>
+
+    <!-- CUADRÍCULA DE BOLETOS -->
+    <main class="w-full max-w-4xl px-4">
+        <div id="loader" class="w-full text-center py-10 text-orange-500 animate-pulse font-bold">
+            Conectando a la Base de Datos...
+        </div>
+        <div id="gridBoletos" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-8 gap-2 pb-8 hidden"></div>
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="w-full max-w-2xl px-4 text-center pb-8">
+        <button id="btnCandado" onclick="gestionarAdmin()" class="text-2xl opacity-30 hover:opacity-100 transition-opacity" title="Panel de Administración">🔒</button>
+    </footer>
+
+    <!-- ============================================== -->
+    <!-- MODALES -->
+    <!-- ============================================== -->
+
+    <!-- Modal Login -->
+    <div id="modalLogin" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50 px-4 transition-opacity">
+        <div class="bg-gray-900 border border-gray-700 p-6 rounded-2xl w-full max-w-sm text-center transform scale-100 transition-transform">
+            <h3 class="text-xl font-bold text-white mb-4">Acceso Administrativo</h3>
+            <input type="password" inputmode="numeric" pattern="[0-9]*" id="inputPin" placeholder="PIN de seguridad" onkeyup="if(event.key === 'Enter') verificarPin()" class="w-full bg-gray-800 text-center text-white text-base border border-gray-600 rounded-lg py-2 mb-4 focus:outline-none focus:border-orange-500">
+            <div class="flex gap-2">
+                <button onclick="cerrarModalLogin()" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 rounded-lg transition-colors">Cancelar</button>
+                <button onclick="verificarPin()" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 rounded-lg transition-colors">Entrar</button>
+            </div>
+            <p id="errorPin" class="text-red-500 text-sm mt-2 hidden">PIN incorrecto</p>
+        </div>
+    </div>
+
+    <!-- Modal Editar -->
+    <div id="modalEditar" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50 px-4">
+        <div class="bg-gray-900 border border-gray-700 p-6 rounded-2xl w-full max-w-sm">
+            <h3 class="text-xl font-bold text-white mb-2 text-center">Registrar Boleto <span id="tituloEdicionNumero" class="text-orange-500"></span></h3>
+            <p class="text-sm text-gray-400 text-center mb-4">El nombre se sincronizará en tiempo real.</p>
+            <input type="text" autocapitalize="words" autocomplete="off" id="inputNombre" maxlength="25" placeholder="Ej. Jesus Venzor" onkeyup="if(event.key === 'Enter') guardarEdicion()" class="w-full bg-gray-800 text-white text-base border border-gray-600 rounded-lg py-2 px-3 mb-4 focus:outline-none focus:border-orange-500">
+            <div class="flex flex-col gap-2">
+                <button onclick="guardarEdicion()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg transition-colors">Guardar en Nube</button>
+                <button id="btnLiberar" onclick="liberarBoleto()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg hidden transition-colors">Liberar Boleto</button>
+                <button onclick="cerrarModalEditar()" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 rounded-lg transition-colors">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Comprar -->
+    <div id="modalComprar" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50 px-4">
+        <div class="bg-gray-900 border border-gray-700 p-6 rounded-2xl w-full max-w-sm text-center">
+            <div class="text-5xl mb-2">🎟️</div>
+            <h3 class="text-2xl font-bold text-white mb-1">¡Excelente elección!</h3>
+            <p class="text-gray-400 mb-6">Has seleccionado el boleto número <strong id="numeroConfirmarVenta" class="text-orange-500 text-xl"></strong></p>
+            <a id="btnConfirmarWhatsApp" href="#" target="_blank" rel="noopener noreferrer" onclick="cerrarModalComprar()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg mb-2 flex justify-center items-center transition-colors">
+                <svg class="w-5 h-5 mr-2 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964.984-3.595c-.607-1.052-.927-2.246-.926-3.468.001-3.825 3.113-6.937 6.937-6.937 3.825 0 6.938 3.112 6.938 6.937 0 3.825-3.113 6.938-6.939 6.938z"/></svg>
+                Apartar por WhatsApp
+            </a>
+            <button onclick="cerrarModalComprar()" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 rounded-lg transition-colors">Volver</button>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- LÓGICA JAVASCRIPT -->
+    <!-- ============================================== -->
+    <script>
+        // Cierre de ventanas
+        window.onclick = function(event) {
+            const modales = ['modalLogin', 'modalEditar', 'modalComprar'];
+            modales.forEach(id => {
+                const modal = document.getElementById(id);
+                if (event.target === modal) {
+                    modal.classList.add('hidden');
+                    if(id === 'modalEditar') boletoEnEdicion = null;
+                }
+            });
+        }
+        
+        window.onkeydown = function(event) {
+            if (event.key === 'Escape') {
+                cerrarModalLogin();
+                cerrarModalEditar();
+                cerrarModalComprar();
+            }
+        }
+
+        function normalizarTexto(texto) {
+            if (!texto) return "";
+            return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w\s]/gi, '').toLowerCase().trim();
+        }
+
+        function formatearNumero(num) {
+            return num < 10 ? '0' + num : num.toString();
+        }
+
+        // --- RECEPCIÓN FIREBASE ---
+        db.ref('boletos').on('value', (snapshot) => {
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('gridBoletos').classList.remove('hidden');
+
+            if (snapshot.exists()) {
+                boletos = Array(TOTAL_BOLETOS).fill(null).map((_, i) => ({ numero: i + 1, nombre: "", estado: "disponible" }));
+                snapshot.forEach((child) => {
+                    const b = child.val();
+                    if (b && b.numero && b.numero >= 1 && b.numero <= TOTAL_BOLETOS) {
+                        boletos[b.numero - 1] = b;
+                    }
+                });
+                actualizarMetricasYAnimaciones();
+                renderizarTablero(document.getElementById('buscador').value);
+            } else {
+                const initBoletos = [];
+                for (let i = 1; i <= TOTAL_BOLETOS; i++) {
+                    initBoletos.push({ numero: i, nombre: "", estado: "disponible" });
+                }
+                db.ref('boletos').set(initBoletos);
+            }
+        });
+
+        // --- SISTEMA DE DIBUJO ---
+        function renderizarTablero(filtro = "") {
+            const grid = document.getElementById('gridBoletos');
+            grid.innerHTML = "";
+            const filtroLimpio = normalizarTexto(filtro);
+
+            boletos.forEach(boleto => {
+                const numeroStr = formatearNumero(boleto.numero);
+                const nombreLimpio = normalizarTexto(boleto.nombre);
+                
+                if (filtroLimpio !== "" && !nombreLimpio.includes(filtroLimpio) && !numeroStr.includes(filtroLimpio)) return;
+
+                const btn = document.createElement('button');
+                const estaDisponible = boleto.estado === "disponible";
+
+                btn.className = `relative aspect-square flex flex-col items-center justify-center p-1 rounded-xl border-2 transition-all duration-200 ${estaDisponible ? "bg-gray-800 border-gray-700 hover:border-orange-500" : "bg-gray-900 border-red-900/50 opacity-90 occupied-card"}`;
+                btn.onclick = () => manejarClicBoleto(boleto.numero);
+
+                const numSpan = document.createElement('span');
+                numSpan.className = `font-bold text-lg leading-tight ${estaDisponible ? 'text-gray-300' : 'text-gray-600 line-through'}`;
+                numSpan.innerText = numeroStr;
+                btn.appendChild(numSpan);
+
+                if (!estaDisponible) {
+                    const nomSpan = document.createElement('span');
+                    nomSpan.class
