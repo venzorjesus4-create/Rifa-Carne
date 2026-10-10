@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gran Rifa Parrillera</title>
-    <!-- Librería para los íconos reales de WhatsApp, Facebook y la Lupa -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
@@ -18,36 +17,30 @@
             align-items: center;
         }
 
-        /* Encabezado Principal */
-        .header-container {
-            text-align: center;
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 400px;
+        /* Animaciones Visuales */
+        @keyframes parpadeoNeon {
+            0%, 100% { text-shadow: 0 0 5px #10b981, 0 0 10px #10b981; }
+            50% { text-shadow: 0 0 15px #10b981, 0 0 25px #10b981; }
         }
-        .header-title {
-            color: #f59e0b;
-            font-size: 22px;
-            font-weight: 900;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        @keyframes resplandorDorado {
+            0%, 100% { box-shadow: 0 0 10px rgba(245, 158, 11, 0.2); border-color: #f59e0b; }
+            50% { box-shadow: 0 0 25px rgba(245, 158, 11, 0.7); border-color: #fbbf24; }
         }
-        .header-subtitle {
-            font-size: 14px;
-            color: #94a3b8;
-        }
+
+        /* Encabezado */
+        .header-container { text-align: center; margin-bottom: 20px; width: 100%; max-width: 400px; }
+        .header-title { color: #f59e0b; font-size: 22px; font-weight: 900; margin-bottom: 8px; text-transform: uppercase; }
+        .header-subtitle { font-size: 14px; color: #94a3b8; }
+        
         .text-green-neon {
             color: #10b981;
             font-weight: bold;
-            text-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+            animation: parpadeoNeon 1.5s infinite alternate;
         }
 
-        /* Tarjeta del Gran Premio */
+        /* Tarjeta del Premio */
         .prize-card {
             background-color: #151c2c;
-            border: 1px solid #f59e0b;
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
             border-radius: 12px;
             padding: 20px;
             width: 100%;
@@ -55,6 +48,7 @@
             box-sizing: border-box;
             position: relative;
             margin-bottom: 20px;
+            animation: resplandorDorado 2s infinite alternate;
         }
         .badge-yellow {
             position: absolute;
@@ -68,243 +62,84 @@
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-        .prize-title {
-            color: #ffffff;
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .prize-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 15px;
-            font-size: 15px;
-            font-weight: 500;
-        }
-        .prize-footer {
-            border-top: 1px solid #334155;
-            padding-top: 15px;
-            margin-top: 5px;
-            font-size: 12px;
-            color: #94a3b8;
-            font-style: italic;
-            text-align: center;
-            line-height: 1.5;
-        }
-        .text-yellow-glow {
-            color: #facc15;
-            font-weight: bold;
-            font-style: normal;
-        }
+        .prize-title { color: #ffffff; font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 20px; }
+        .prize-item { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; font-size: 15px; font-weight: 500; }
+        .prize-footer { border-top: 1px solid #334155; padding-top: 15px; margin-top: 5px; font-size: 12px; color: #94a3b8; font-style: italic; text-align: center; line-height: 1.5; }
+        .text-yellow-glow { color: #facc15; font-weight: bold; }
 
-        /* Botones de Acción Inmediata */
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            width: 100%;
-            max-width: 400px;
-            margin-bottom: 20px;
-        }
+        /* Botones Sociales */
+        .action-buttons { display: flex; gap: 10px; width: 100%; max-width: 400px; margin-bottom: 20px; }
         .btn {
-            flex: 1;
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            border: none;
+            flex: 1; padding: 12px; border-radius: 8px; text-align: center; text-decoration: none;
+            color: white; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .btn-wa { background-color: #25d366; }
         .btn-fb { background-color: #1877f2; }
 
-        /* Tarjetas Secundarias */
-        .card {
-            background-color: #151c2c;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 400px;
-            box-sizing: border-box;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-        .info-text {
-            font-size: 13px;
-            color: #94a3b8;
-            line-height: 1.6;
-        }
+        /* Tarjetas */
+        .card { background-color: #151c2c; border-radius: 12px; padding: 20px; margin-bottom: 20px; width: 100%; max-width: 400px; box-sizing: border-box; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .info-text { font-size: 13px; color: #94a3b8; line-height: 1.6; }
         .info-text strong { color: #ffffff; }
         .text-green { color: #10b981; font-weight: bold; }
-        .text-orange { color: #f97316; font-weight: bold; }
+        .meta-title { color: #f97316; font-size: 15px; font-weight: bold; text-align: center; margin-bottom: 10px; }
+        .meta-text { font-size: 13px; color: #94a3b8; text-align: center; line-height: 1.5; }
 
-        /* Contenedor Meta */
-        .meta-title {
-            color: #f97316;
-            font-size: 15px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        .meta-text {
-            font-size: 13px;
-            color: #94a3b8;
-            text-align: center;
-            line-height: 1.5;
-        }
-
-        /* Estadísticas */
-        .stats-container {
-            display: flex;
-            justify-content: space-between;
-        }
-        .stat-box {
-            width: 50%;
-            text-align: center;
-        }
-        .stat-divider {
-            width: 1px;
-            background-color: #334155;
-        }
-        .stat-label {
-            font-size: 12px;
-            color: #94a3b8;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-        .stat-value {
-            font-size: 32px;
-            color: #f97316;
-            font-weight: bold;
-            margin-top: 5px;
-        }
+        /* Estadísticas y Buscador */
+        .stats-container { display: flex; justify-content: space-between; }
+        .stat-box { width: 50%; text-align: center; }
+        .stat-divider { width: 1px; background-color: #334155; }
+        .stat-label { font-size: 12px; color: #94a3b8; font-weight: bold; letter-spacing: 1px; }
+        .stat-value { font-size: 32px; color: #f97316; font-weight: bold; margin-top: 5px; }
         .stat-value.white { color: #ffffff; }
 
-        /* Buscador */
-        .search-container {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-            margin-bottom: 20px;
-        }
-        .search-input {
-            width: 100%;
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            color: #ffffff;
-            padding: 15px 40px 15px 15px; /* Espacio extra a la derecha para la lupa */
-            border-radius: 8px;
-            font-size: 14px;
-            box-sizing: border-box;
-            outline: none;
-        }
-        .search-icon {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-        }
-
-        /* Mensaje de Carga */
-        #loading {
-            color: #f97316;
-            font-weight: bold;
-            margin-top: 10px;
-            text-align: center;
-            font-size: 14px;
-        }
+        .search-container { position: relative; width: 100%; max-width: 400px; margin-bottom: 20px; }
+        .search-input { width: 100%; background-color: #1e293b; border: 1px solid #334155; color: #ffffff; padding: 15px 40px 15px 15px; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; }
+        .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+        
+        #loading { color: #f97316; font-weight: bold; margin-top: 10px; text-align: center; font-size: 14px; }
         
         /* Grid de Boletos */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-            gap: 10px;
-            width: 100%;
-            max-width: 400px;
-            margin-top: 20px;
-        }
-        .ticket {
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            color: #ffffff;
-            padding: 15px 0;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .ticket:hover {
-            background-color: #334155;
-        }
-        .ticket.sold {
-            background-color: #ef4444;
-            border-color: #ef4444;
-            cursor: not-allowed;
-            color: white;
-        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 10px; width: 100%; max-width: 400px; margin-top: 20px; }
+        .ticket { background-color: #1e293b; border: 1px solid #334155; color: #ffffff; padding: 15px 0; border-radius: 8px; text-align: center; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        .ticket:hover { background-color: #334155; }
+        .ticket.sold { background-color: #ef4444; border-color: #ef4444; cursor: not-allowed; color: white; }
+
+        /* Candado Administrador */
+        .admin-footer { width: 100%; max-width: 400px; text-align: center; margin-top: 30px; padding-bottom: 20px; }
+        .btn-candado { background: none; border: none; font-size: 20px; cursor: pointer; opacity: 0.3; transition: opacity 0.3s; color: #94a3b8; }
+        .btn-candado:hover { opacity: 1; }
     </style>
 </head>
 <body>
 
-    <!-- Encabezado -->
     <div class="header-container">
         <div class="header-title">GRAN RIFA PARRILLERA</div>
         <div class="header-subtitle">Valor del boleto: <span class="text-green-neon">$50 MXN</span></div>
     </div>
 
-    <!-- Tarjeta del Premio Principal -->
     <div class="prize-card">
         <div class="badge-yellow">¡TODO EN UNO!</div>
         <div class="prize-title">GRAN PREMIO ÚNICO</div>
-        
-        <div class="prize-item">
-            <span>🥩</span> 5 kg de Carne para asar
-        </div>
-        <div class="prize-item">
-            <span>🍻</span> Un 48 de Cerveza
-        </div>
-        <div class="prize-item">
-            <span>💵</span> <span class="text-green-neon">$2,000 MXN en efectivo</span>
-        </div>
-        
-        <div class="prize-footer">
-            Opcional: Si el ganador lo prefiere, puede elegir llevarse <span class="text-yellow-glow">$4,000 MXN en efectivo absoluto.</span>
-        </div>
+        <div class="prize-item"><span>🥩</span> 5 kg de Carne para asar</div>
+        <div class="prize-item"><span>🍻</span> Un 48 de Cerveza</div>
+        <div class="prize-item"><span>💵</span> <span class="text-green-neon">$2,000 MXN en efectivo</span></div>
+        <div class="prize-footer">Opcional: Si el ganador lo prefiere, puede elegir llevarse <span class="text-yellow-glow">$4,000 MXN en efectivo absoluto.</span></div>
     </div>
 
-    <!-- Botones Sociales -->
     <div class="action-buttons">
-        <a href="https://wa.me/TUNUMERO" class="btn btn-wa" target="_blank">
-            <i class="fab fa-whatsapp"></i> Comprar en WhatsApp
-        </a>
-        <a href="https://facebook.com/TUPAGINA" class="btn btn-fb" target="_blank">
-            <i class="fab fa-facebook-f"></i> Página de Facebook
-        </a>
+        <a href="#" id="btn-wa-top" class="btn btn-wa" target="_blank"><i class="fab fa-whatsapp"></i> Comprar en WhatsApp</a>
+        <a href="#" id="btn-fb-top" class="btn btn-fb" target="_blank"><i class="fab fa-facebook-f"></i> Página de Facebook</a>
     </div>
 
-    <!-- Tarjeta de Información (En Vivo) -->
     <div class="card info-text">
-        🔴 El sorteo se realizará <strong>EN VIVO</strong>. Al adquirir tu boleto, serás agregado a nuestro <span class="text-green">grupo exclusivo de WhatsApp</span> donde podrás seguir de cerca el sorteo y enterarte de futuras rifas.
+        🔴 El sorteo se realizará <strong>EN VIVO</strong>. Al adquirir tu boleto, serás agregado a nuestro <span class="text-green">grupo exclusivo de WhatsApp</span> donde podrás seguir de cerca el sorteo.
     </div>
 
-    <!-- Tarjeta de Meta -->
     <div class="card">
         <div class="meta-title">¡Ayúdanos a llegar a la meta! 🔥</div>
-        <div class="meta-text">
-            Entre más rápido se vendan los boletos, más pronto haremos el gran sorteo. ¡Comparte esta página con tus amigos y familiares!
-        </div>
+        <div class="meta-text">Entre más rápido se vendan los boletos, más pronto haremos el gran sorteo. ¡Comparte esta página!</div>
     </div>
 
-    <!-- Tarjeta de Estadísticas -->
     <div class="card stats-container">
         <div class="stat-box">
             <div class="stat-label">QUEDAN</div>
@@ -317,22 +152,30 @@
         </div>
     </div>
 
-    <!-- Buscador -->
     <div class="search-container">
         <input type="text" id="searchInput" class="search-input" placeholder="Busca tu nombre o número...">
         <i class="fas fa-search search-icon"></i>
     </div>
 
-    <!-- Estado de Conexión -->
-    <div id="loading">Conectando a la Base de Datos...<br><br>🔒</div>
+    <div id="loading">Conectando a la Base de Datos...<br><br>⏳</div>
     
-    <!-- Cuadrícula de Boletos -->
     <div class="grid" id="ticketGrid" style="display: none;"></div>
 
-    <!-- Lógica y Base de Datos -->
+    <!-- Candado Oculto del Administrador -->
+    <div class="admin-footer">
+        <button id="btnCandado" class="btn-candado">🔒</button>
+    </div>
+
+    <!-- Firebase y Lógica -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const MI_NUMERO_WHATSAPP = "526451109290"; 
+        const MI_PAGINA_FACEBOOK = "https://www.facebook.com/share/1GesdvKuki/";
+        
+        document.getElementById("btn-wa-top").href = `https://api.whatsapp.com/send?phone=${MI_NUMERO_WHATSAPP}`;
+        document.getElementById("btn-fb-top").href = MI_PAGINA_FACEBOOK;
 
         const firebaseConfig = {
             apiKey: "AIzaSyDEAwK-CYAcTRF6Wm_rc7GTvKp2ERKnIAY",
@@ -356,8 +199,8 @@
         
         let boletosData = {};
         const TOTAL_BOLETOS = 200;
+        let esAdmin = false; 
 
-        // 🔥 LA LICUADORA MATEMÁTICA 🔥
         function licuadoraMatematica(pin) {
             let resultado = "";
             for (let i = 0; i < pin.length; i++) {
@@ -367,6 +210,25 @@
         }
 
         const PIN_ENCRIPTADO = "6066626264606064";
+
+        document.getElementById('btnCandado').addEventListener('click', () => {
+            if (esAdmin) {
+                alert("Ya estás en Modo Administrador 🔓");
+                return;
+            }
+            const pinIngresado = prompt("🔒 Área de Administrador\nIngresa tu PIN:");
+            if (pinIngresado && licuadoraMatematica(pinIngresado) === PIN_ENCRIPTADO) {
+                esAdmin = true;
+                const btn = document.getElementById('btnCandado');
+                btn.textContent = "🔓 Modo Administrador Activo";
+                btn.style.color = "#10b981";
+                btn.style.opacity = "1";
+                btn.style.fontSize = "14px";
+                alert("✅ Modo Administrador activado. Ahora si tocas un número podrás registrar al cliente.");
+            } else if (pinIngresado) {
+                alert("❌ PIN incorrecto.");
+            }
+        });
 
         onValue(ticketsRef, (snapshot) => {
             loading.style.display = 'none';
@@ -398,7 +260,7 @@
                 div.textContent = numStr;
                 
                 if (!isSold) {
-                    div.onclick = () => apartarBoleto(i);
+                    div.onclick = () => procesarBoleto(i);
                 } else {
                     div.title = `Apartado por: ${boleto.nombre}`;
                 }
@@ -413,23 +275,24 @@
             renderTickets(e.target.value);
         });
 
-        function apartarBoleto(numero) {
-            const pinIngresado = prompt("🔒 Ingresa tu PIN de administrador para apartar este boleto:");
-            
-            if (!pinIngresado || licuadoraMatematica(pinIngresado) !== PIN_ENCRIPTADO) {
-                alert("❌ PIN incorrecto. Solo el administrador puede registrar números.");
-                return;
-            }
-
+        function procesarBoleto(numero) {
             const numFormateado = numero.toString().padStart(3, '0');
-            const nombre = prompt(`Vas a apartar el boleto ${numFormateado}.\nEscribe el nombre del participante:`);
             
-            if (nombre && nombre.trim() !== "") {
-                set(ref(db, `boletos/${numero}`), {
-                    vendido: true,
-                    nombre: nombre.trim()
-                });
-                alert(`✅ Boleto ${numFormateado} apartado con éxito para ${nombre.trim()}`);
+            if (esAdmin) {
+                const nombre = prompt(`(MODO ADMIN) Vas a apartar el boleto ${numFormateado}.\nNombre del participante:`);
+                if (nombre && nombre.trim() !== "") {
+                    set(ref(db, `boletos/${numero}`), {
+                        vendido: true,
+                        nombre: nombre.trim()
+                    });
+                }
+            } else {
+                const confirmar = confirm(`Has seleccionado el boleto ${numFormateado}.\n\n¿Deseas ir a WhatsApp para solicitar el apartado?`);
+                if (confirmar) {
+                    const mensaje = `Hola, me interesa apartar el boleto ${numFormateado} para la Gran Rifa Parrillera. ¿Sigue disponible?`;
+                    const urlWhatsapp = `https://api.whatsapp.com/send?phone=${MI_NUMERO_WHATSAPP}&text=${encodeURIComponent(mensaje)}`;
+                    window.open(urlWhatsapp, '_blank');
+                }
             }
         }
     </script>
