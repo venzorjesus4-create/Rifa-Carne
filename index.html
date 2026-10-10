@@ -5,6 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gran Rifa Parrillera</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- ESCÁNER DE DIAGNÓSTICO (CAZADOR DE ERRORES) -->
+    <script>
+        window.addEventListener('error', function(e) {
+            const loading = document.getElementById('loading');
+            if(loading) {
+                loading.style.color = '#ef4444';
+                loading.innerHTML = "❌ ERROR DETECTADO (Tómale captura):<br><br>" + e.message;
+            }
+        });
+        window.addEventListener('unhandledrejection', function(e) {
+            const loading = document.getElementById('loading');
+            if(loading) {
+                loading.style.color = '#ef4444';
+                loading.innerHTML = "❌ ERROR DE RED (Tómale captura):<br><br>" + (e.reason || "Conexión rechazada");
+            }
+        });
+    </script>
+
     <style>
         body {
             background-color: #0b1120;
@@ -247,7 +266,6 @@
         document.getElementById("btn-wa-top").href = `https://api.whatsapp.com/send?phone=${MI_NUMERO_WHATSAPP}`;
         document.getElementById("btn-fb-top").href = MI_PAGINA_FACEBOOK;
 
-        // NUEVA LLAVE VINCULADA
         const firebaseConfig = {
             apiKey: "AIzaSyCpF6Fy6OH13MeNYaVpOHD_olzesq1QqtE",
             authDomain: "rifas-real-843e5.firebaseapp.com",
@@ -358,7 +376,8 @@
             boletosData = snapshot.val() || {};
             renderTickets();
         }, (error) => {
-            loading.innerHTML = "Error de conexión ❌<br>Revisa tu internet";
+            loading.style.color = '#ef4444';
+            loading.innerHTML = "❌ ERROR DE CONEXIÓN FIREBASE:<br><br>" + error.message;
         });
 
         function renderTickets(filterText = "") {
@@ -396,21 +415,4 @@
             spanQuedan.textContent = quedan;
             
             let velocidad = Math.max(0.3, (quedan / TOTAL_BOLETOS) * 3);
-            spanQuedan.style.animation = `latidoUrgencia ${velocidad}s infinite alternate`;
-        }
-
-        searchInput.addEventListener('input', (e) => {
-            renderTickets(e.target.value);
-        });
-
-        async function procesarBoleto(numero, isSold, ownerName) {
-            const numFormateado = numero.toString().padStart(3, '0');
-            
-            if (esAdmin) {
-                if (isSold) {
-                    const liberar = await mostrarModal('confirmacion', `El boleto <strong>${numFormateado}</strong> está apartado por <strong>${ownerName}</strong>.<br><br>¿Deseas LIBERAR este número?`);
-                    if (liberar) {
-                        set(ref(db, `boletos/${numero}`), null);
-                    }
-                } else {
-                    const nombre = await mostrarModal('formulario', `Vas a
+            spanQuedan.style.animation = `latidoUrgencia ${velocida
