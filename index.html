@@ -32,12 +32,16 @@
             100% { transform: scale(1); opacity: 1; }
         }
         @keyframes movimientoFuego {
-            0%, 100% { transform: scale(1) rotate(-3deg); opacity: 1; }
-            50% { transform: scale(1.2) rotate(3deg); opacity: 0.8; }
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.8; } /* Solo escala, sin inclinación */
+        }
+        @keyframes latidoUrgencia {
+            0%, 100% { transform: scale(1); text-shadow: none; }
+            50% { transform: scale(1.1); text-shadow: 0 0 15px #f97316; color: #ffedd5; }
         }
 
         .circulo-rojo { display: inline-block; animation: latidoRojo 1.2s infinite; }
-        .fuego-animado { display: inline-block; animation: movimientoFuego 1s infinite alternate; }
+        .fuego-animado { display: inline-block; animation: movimientoFuego 1.2s infinite alternate; margin-right: 5px; }
 
         /* Encabezado */
         .header-container { text-align: center; margin-bottom: 20px; width: 100%; max-width: 400px; }
@@ -89,7 +93,7 @@
         .action-buttons { display: flex; gap: 10px; width: 100%; max-width: 400px; margin-bottom: 20px; }
         .btn {
             flex: 1; padding: 12px; border-radius: 8px; text-align: center; text-decoration: none;
-            color: white; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;
+            color: white; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;
         }
         .btn-wa { background-color: #25d366; }
         .btn-fb { background-color: #1877f2; }
@@ -107,7 +111,7 @@
         .stat-box { width: 50%; text-align: center; }
         .stat-divider { width: 1px; background-color: #334155; }
         .stat-label { font-size: 12px; color: #94a3b8; font-weight: bold; letter-spacing: 1px; }
-        .stat-value { font-size: 32px; color: #f97316; font-weight: bold; margin-top: 5px; }
+        .stat-value { font-size: 32px; color: #f97316; font-weight: bold; margin-top: 5px; display: inline-block; }
         .stat-value.white { color: #ffffff; }
 
         .search-container { position: relative; width: 100%; max-width: 400px; margin-bottom: 20px; }
@@ -116,72 +120,51 @@
         
         #loading { color: #f97316; font-weight: bold; margin-top: 10px; text-align: center; font-size: 14px; }
         
-        /* ==========================================
-           GRID DE BOLETOS (4 POR FILA Y CUADRADOS)
-           ========================================== */
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); /* Fuerza 4 cuadros exactos por fila */
-            gap: 10px; 
-            width: 100%; 
-            max-width: 400px; 
-            margin-top: 20px; 
-        }
+        /* Grid de Boletos (4 por fila y cuadrados) */
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; max-width: 400px; margin-top: 20px; }
         
         .ticket { 
-            background-color: #1e293b; 
-            border: 1px solid #334155; 
-            color: #ffffff; 
-            border-radius: 8px; 
-            text-align: center; 
-            cursor: pointer; 
-            transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            aspect-ratio: 1 / 1; /* Cuadrados perfectos */
-            overflow: hidden; 
-            padding: 4px;
-            box-sizing: border-box;
+            background-color: #1e293b; border: 1px solid #334155; color: #ffffff; border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.3s;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            aspect-ratio: 1 / 1; overflow: hidden; padding: 4px; box-sizing: border-box;
         }
-        
         .ticket:hover { background-color: #334155; transform: scale(1.05); }
         
         .ticket.sold { 
-            background: linear-gradient(135deg, #ef4444, #991b1b);
-            border-color: #fca5a5; 
-            cursor: not-allowed; 
-            color: white; 
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
-            transform: scale(1);
+            background: linear-gradient(135deg, #ef4444, #991b1b); border-color: #fca5a5; color: white; 
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.7); transform: scale(1); cursor: pointer; /* Ahora es clickeable para el admin */
         }
         
-        .ticket-number {
-            font-size: 18px; /* Número más grande */
-            font-weight: 900;
-            line-height: 1;
-        }
+        .ticket-number { font-size: 18px; font-weight: 900; line-height: 1; }
         
         .ticket-name {
-            font-size: 11px; /* Nombre más legible */
-            font-weight: 700;
-            margin-top: 4px;
-            width: 100%;
-            line-height: 1.1;
-            word-wrap: break-word; 
-            display: -webkit-box;
-            -webkit-line-clamp: 2; /* Acomoda hasta en 2 renglones */
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-transform: capitalize;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            font-size: 11px; font-weight: 700; margin-top: 4px; width: 100%; line-height: 1.1; word-wrap: break-word; 
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+            text-transform: capitalize; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
         }
 
         /* Candado Administrador */
         .admin-footer { width: 100%; max-width: 400px; text-align: center; margin-top: 30px; padding-bottom: 20px; }
         .btn-candado { background: none; border: none; font-size: 20px; cursor: pointer; opacity: 0.3; transition: opacity 0.3s; color: #94a3b8; }
         .btn-candado:hover { opacity: 1; }
+
+        /* ==========================================
+           MODALES PERSONALIZADOS (Estilo Premium)
+           ========================================== */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(11, 17, 32, 0.85); backdrop-filter: blur(5px);
+            z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-card {
+            background-color: #151c2c; border: 1px solid #f97316; border-radius: 12px; padding: 25px;
+            width: 100%; max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); text-align: center;
+        }
+        .modal-message { color: #fff; font-size: 15px; margin-bottom: 20px; line-height: 1.5; }
+        .modal-message strong { color: #facc15; }
+        .modal-input { width: 100%; margin-bottom: 20px; text-align: center; }
+        .modal-buttons { display: flex; gap: 10px; }
+        .btn-cancel { background-color: #334155; color: white; }
+        .btn-accept { background-color: #f97316; color: white; }
     </style>
 </head>
 <body>
@@ -210,7 +193,7 @@
     </div>
 
     <div class="card">
-        <div class="meta-title">¡Ayúdanos a llegar a la meta! <span class="fuego-animado">🔥</span></div>
+        <div class="meta-title"><span class="fuego-animado">🔥</span> ¡Ayúdanos a llegar a la meta!</div>
         <div class="meta-text">Entre más rápido se vendan los boletos, más pronto haremos el gran sorteo. ¡Comparte esta página!</div>
     </div>
 
@@ -240,12 +223,24 @@
         <button id="btnCandado" class="btn-candado" title="Modo Administrador">🔒</button>
     </div>
 
+    <!-- Sistema de Modales Personalizados -->
+    <div id="customModal" class="modal-overlay">
+        <div class="modal-card">
+            <div id="modalMessage" class="modal-message"></div>
+            <input type="text" id="modalInput" class="search-input modal-input" style="display: none;" autocomplete="off">
+            <div class="modal-buttons">
+                <button id="modalBtnCancel" class="btn btn-cancel">Cancelar</button>
+                <button id="modalBtnAccept" class="btn btn-accept">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase y Lógica -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Enlaces de tu contacto directo
+        // Enlaces de contacto
         const MI_NUMERO_WHATSAPP = "526451109290"; 
         const MI_PAGINA_FACEBOOK = "https://www.facebook.com/share/1GesdvKuki/";
         
@@ -276,6 +271,7 @@
         const TOTAL_BOLETOS = 200;
         let esAdmin = false; 
 
+        // Licuadora Matemática de Seguridad
         function licuadoraMatematica(pin) {
             let resultado = "";
             for (let i = 0; i < pin.length; i++) {
@@ -283,15 +279,65 @@
             }
             return resultado;
         }
-
         const PIN_ENCRIPTADO = "6066626264606064";
 
-        document.getElementById('btnCandado').addEventListener('click', () => {
+        // ==========================================
+        // CONTROL DE MODALES PERSONALIZADOS
+        // ==========================================
+        function mostrarModal(tipo, mensaje) {
+            return new Promise((resolve) => {
+                const overlay = document.getElementById('customModal');
+                const msgEl = document.getElementById('modalMessage');
+                const inputEl = document.getElementById('modalInput');
+                const btnCancel = document.getElementById('modalBtnCancel');
+                const btnAccept = document.getElementById('modalBtnAccept');
+
+                msgEl.innerHTML = mensaje;
+                inputEl.value = '';
+
+                if (tipo === 'alerta') {
+                    inputEl.style.display = 'none';
+                    btnCancel.style.display = 'none';
+                    btnAccept.textContent = 'OK';
+                } else if (tipo === 'confirmacion') {
+                    inputEl.style.display = 'none';
+                    btnCancel.style.display = 'block';
+                    btnCancel.textContent = 'Cancelar';
+                    btnAccept.textContent = 'Aceptar';
+                } else if (tipo === 'formulario') {
+                    inputEl.style.display = 'block';
+                    btnCancel.style.display = 'block';
+                    btnCancel.textContent = 'Cancelar';
+                    btnAccept.textContent = 'Guardar';
+                    setTimeout(() => inputEl.focus(), 100);
+                }
+
+                overlay.style.display = 'flex';
+
+                const limpiar = () => {
+                    overlay.style.display = 'none';
+                    btnCancel.onclick = null;
+                    btnAccept.onclick = null;
+                };
+
+                btnCancel.onclick = () => { limpiar(); resolve(null); };
+                btnAccept.onclick = () => { 
+                    limpiar(); 
+                    if (tipo === 'formulario') resolve(inputEl.value);
+                    else resolve(true); 
+                };
+            });
+        }
+
+        // ==========================================
+        // LÓGICA DE ADMINISTRADOR Y BOLETOS
+        // ==========================================
+        document.getElementById('btnCandado').addEventListener('click', async () => {
             if (esAdmin) {
-                alert("Ya estás en Modo Administrador 🔓");
+                await mostrarModal('alerta', "Ya estás en Modo Administrador 🔓");
                 return;
             }
-            const pinIngresado = prompt("🔒 Área de Administrador\nIngresa tu PIN:");
+            const pinIngresado = await mostrarModal('formulario', "🔒 <strong>Área de Administrador</strong><br><br>Ingresa tu PIN de seguridad:");
             if (pinIngresado && licuadoraMatematica(pinIngresado) === PIN_ENCRIPTADO) {
                 esAdmin = true;
                 const btn = document.getElementById('btnCandado');
@@ -299,9 +345,9 @@
                 btn.style.color = "#10b981";
                 btn.style.opacity = "1";
                 btn.style.fontSize = "14px";
-                alert("✅ Modo Administrador activado. Ahora si tocas un número podrás registrar al cliente.");
+                await mostrarModal('alerta', "✅ Modo Administrador activado.<br><br>Ahora puedes registrar nombres o <strong>tocar un boleto rojo para liberarlo</strong>.");
             } else if (pinIngresado) {
-                alert("❌ PIN incorrecto.");
+                await mostrarModal('alerta', "❌ PIN incorrecto.");
             }
         });
 
@@ -331,48 +377,41 @@
                 }
 
                 const div = document.createElement('div');
+                div.onclick = () => procesarBoleto(i, isSold, ownerName); // Siempre clickeable
                 
                 if (!isSold) {
                     div.className = 'ticket';
                     div.innerHTML = `<div class="ticket-number">${numStr}</div>`;
-                    div.onclick = () => procesarBoleto(i);
                 } else {
                     div.className = 'ticket sold';
                     div.innerHTML = `<div class="ticket-number">${numStr}</div><div class="ticket-name">${ownerName}</div>`;
-                    div.title = `Apartado por: ${ownerName}`;
                 }
                 
                 grid.appendChild(div);
             }
             
+            // Actualizar contadores y efecto de urgencia
+            let quedan = TOTAL_BOLETOS - ocupados;
             spanOcupados.textContent = ocupados;
-            spanQuedan.textContent = TOTAL_BOLETOS - ocupados;
+            spanQuedan.textContent = quedan;
+            
+            // Efecto intermitente que se acelera conforme quedan menos números
+            // Empieza en 3 segundos (lento) y baja hasta 0.3 segundos (muy rápido)
+            let velocidad = Math.max(0.3, (quedan / TOTAL_BOLETOS) * 3);
+            spanQuedan.style.animation = `latidoUrgencia ${velocidad}s infinite alternate`;
         }
 
         searchInput.addEventListener('input', (e) => {
             renderTickets(e.target.value);
         });
 
-        function procesarBoleto(numero) {
+        async function procesarBoleto(numero, isSold, ownerName) {
             const numFormateado = numero.toString().padStart(3, '0');
             
             if (esAdmin) {
-                const nombre = prompt(`(MODO ADMIN) Vas a apartar el boleto ${numFormateado}.\nNombre del participante:`);
-                if (nombre && nombre.trim() !== "") {
-                    set(ref(db, `boletos/${numero}`), {
-                        vendido: true,
-                        nombre: nombre.trim()
-                    });
-                }
-            } else {
-                const confirmar = confirm(`Has seleccionado el boleto ${numFormateado}.\n\n¿Deseas ir a WhatsApp para solicitar el apartado?`);
-                if (confirmar) {
-                    const mensaje = `Hola, me interesa apartar el boleto ${numFormateado} para la Gran Rifa Parrillera. ¿Sigue disponible?`;
-                    const urlWhatsapp = `https://api.whatsapp.com/send?phone=${MI_NUMERO_WHATSAPP}&text=${encodeURIComponent(mensaje)}`;
-                    window.open(urlWhatsapp, '_blank');
-                }
-            }
-        }
-    </script>
-</body>
-</html>
+                if (isSold) {
+                    // Modo Admin: Liberar boleto ocupado
+                    const liberar = await mostrarModal('confirmacion', `El boleto <strong>${numFormateado}</strong> está apartado por <strong>${ownerName}</strong>.<br><br>¿Deseas LIBERAR este número?`);
+                    if (liberar) {
+                        set(ref(db, `boletos/${numero}`), null);
+ 
