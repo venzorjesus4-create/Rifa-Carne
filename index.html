@@ -6,20 +6,20 @@
     <title>Gran Rifa Parrillera</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- ESCÁNER DE DIAGNÓSTICO (CAZADOR DE ERRORES) -->
+    <!-- ESCÁNER DE DIAGNÓSTICO -->
     <script>
         window.addEventListener('error', function(e) {
             const loading = document.getElementById('loading');
             if(loading) {
                 loading.style.color = '#ef4444';
-                loading.innerHTML = "❌ ERROR DETECTADO (Tómale captura):<br><br>" + e.message;
+                loading.innerHTML = "❌ ERROR DETECTADO:<br><br>" + e.message;
             }
         });
         window.addEventListener('unhandledrejection', function(e) {
             const loading = document.getElementById('loading');
             if(loading) {
                 loading.style.color = '#ef4444';
-                loading.innerHTML = "❌ ERROR DE RED (Tómale captura):<br><br>" + (e.reason || "Conexión rechazada");
+                loading.innerHTML = "❌ ERROR DE RED:<br><br>" + (e.reason || "Conexión rechazada");
             }
         });
     </script>
@@ -139,7 +139,7 @@
         
         #loading { color: #f97316; font-weight: bold; margin-top: 10px; text-align: center; font-size: 14px; }
         
-        /* Grid de Boletos (4 por fila y cuadrados) */
+        /* Grid de Boletos */
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; max-width: 400px; margin-top: 20px; }
         
         .ticket { 
@@ -167,9 +167,7 @@
         .btn-candado { background: none; border: none; font-size: 20px; cursor: pointer; opacity: 0.3; transition: opacity 0.3s; color: #94a3b8; }
         .btn-candado:hover { opacity: 1; }
 
-        /* ==========================================
-           MODALES PERSONALIZADOS (Estilo Premium)
-           ========================================== */
+        /* Modales Personalizados */
         .modal-overlay {
             position: fixed; inset: 0; background: rgba(11, 17, 32, 0.85); backdrop-filter: blur(5px);
             z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px;
@@ -237,12 +235,10 @@
     
     <div class="grid" id="ticketGrid" style="display: none;"></div>
 
-    <!-- Candado Oculto del Administrador -->
     <div class="admin-footer">
         <button id="btnCandado" class="btn-candado" title="Modo Administrador">🔒</button>
     </div>
 
-    <!-- Sistema de Modales Personalizados -->
     <div id="customModal" class="modal-overlay">
         <div class="modal-card">
             <div id="modalMessage" class="modal-message"></div>
@@ -259,7 +255,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Enlaces de contacto
         const MI_NUMERO_WHATSAPP = "526451109290"; 
         const MI_PAGINA_FACEBOOK = "https://www.facebook.com/share/1GesdvKuki/";
         
@@ -290,7 +285,6 @@
         const TOTAL_BOLETOS = 200;
         let esAdmin = false; 
 
-        // Licuadora Matemática de Seguridad (Contraseña original: 03112002)
         function licuadoraMatematica(pin) {
             let resultado = "";
             for (let i = 0; i < pin.length; i++) {
@@ -300,9 +294,6 @@
         }
         const PIN_ENCRIPTADO = "6066626264606064";
 
-        // ==========================================
-        // CONTROL DE MODALES PERSONALIZADOS
-        // ==========================================
         function mostrarModal(tipo, mensaje) {
             return new Promise((resolve) => {
                 const overlay = document.getElementById('customModal');
@@ -348,9 +339,6 @@
             });
         }
 
-        // ==========================================
-        // LÓGICA DE ADMINISTRADOR Y BOLETOS
-        // ==========================================
         document.getElementById('btnCandado').addEventListener('click', async () => {
             if (esAdmin) {
                 await mostrarModal('alerta', "Ya estás en Modo Administrador 🔓");
@@ -415,4 +403,21 @@
             spanQuedan.textContent = quedan;
             
             let velocidad = Math.max(0.3, (quedan / TOTAL_BOLETOS) * 3);
-            spanQuedan.style.animation = `latidoUrgencia ${velocida
+            spanQuedan.style.animation = `latidoUrgencia ${velocidad}s infinite alternate`;
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            renderTickets(e.target.value);
+        });
+
+        async function procesarBoleto(numero, isSold, ownerName) {
+            const numFormateado = numero.toString().padStart(3, '0');
+            
+            if (esAdmin) {
+                if (isSold) {
+                    const liberar = await mostrarModal('confirmacion', `El boleto <strong>${numFormateado}</strong> está apartado por <strong>${ownerName}</strong>.<br><br>¿Deseas LIBERAR este número?`);
+                    if (liberar) {
+                        set(ref(db, `boletos/${numero}`), null);
+                    }
+                } else {
+       
