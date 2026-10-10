@@ -163,8 +163,8 @@
         .modal-message strong { color: #facc15; }
         .modal-input { width: 100%; margin-bottom: 20px; text-align: center; }
         .modal-buttons { display: flex; gap: 10px; }
-        .btn-cancel { background-color: #334155; color: white; }
-        .btn-accept { background-color: #f97316; color: white; }
+        .btn-cancel { background-color: #334155; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; flex: 1; font-weight: bold;}
+        .btn-accept { background-color: #f97316; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; flex: 1; font-weight: bold;}
     </style>
 </head>
 <body>
@@ -229,8 +229,8 @@
             <div id="modalMessage" class="modal-message"></div>
             <input type="text" id="modalInput" class="search-input modal-input" style="display: none;" autocomplete="off">
             <div class="modal-buttons">
-                <button id="modalBtnCancel" class="btn btn-cancel">Cancelar</button>
-                <button id="modalBtnAccept" class="btn btn-accept">Aceptar</button>
+                <button id="modalBtnCancel" class="btn-cancel">Cancelar</button>
+                <button id="modalBtnAccept" class="btn-accept">Aceptar</button>
             </div>
         </div>
     </div>
@@ -247,14 +247,15 @@
         document.getElementById("btn-wa-top").href = `https://api.whatsapp.com/send?phone=${MI_NUMERO_WHATSAPP}`;
         document.getElementById("btn-fb-top").href = MI_PAGINA_FACEBOOK;
 
+        // NUEVA LLAVE VINCULADA
         const firebaseConfig = {
-            apiKey: "AIzaSyDEAwK-CYAcTRF6Wm_rc7GTvKp2ERKnIAY",
-            authDomain: "rifas-cananea.firebaseapp.com",
-            databaseURL: "https://rifas-cananea-default-rtdb.firebaseio.com",
-            projectId: "rifas-cananea",
-            storageBucket: "rifas-cananea.firebasestorage.app",
-            messagingSenderId: "685658823595",
-            appId: "1:685658823595:web:a892b6814fb3a34c0e90ee"
+            apiKey: "AIzaSyCpF6Fy6OH13MeNYaVpOHD_olzesq1QqtE",
+            authDomain: "rifas-real-843e5.firebaseapp.com",
+            databaseURL: "https://rifas-real-843e5-default-rtdb.firebaseio.com",
+            projectId: "rifas-real-843e5",
+            storageBucket: "rifas-real-843e5.firebasestorage.app",
+            messagingSenderId: "922361885670",
+            appId: "1:922361885670:web:fb29085d2e498d0f519c27"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -271,7 +272,7 @@
         const TOTAL_BOLETOS = 200;
         let esAdmin = false; 
 
-        // Licuadora Matemática de Seguridad
+        // Licuadora Matemática de Seguridad (Contraseña original: 03112002)
         function licuadoraMatematica(pin) {
             let resultado = "";
             for (let i = 0; i < pin.length; i++) {
@@ -412,7 +413,4 @@
                         set(ref(db, `boletos/${numero}`), null);
                     }
                 } else {
-                    const nombre = await mostrarModal('formulario', `Vas a registrar el boleto <strong>${numFormateado}</strong>.<br><br>Ingresa el nombre del participante:`);
-                    if (nombre && nombre.trim() !== "") {
-                        set(ref(db, `boletos/${numero}`), {
-                            vendido
+                    const nombre = await mostrarModal('formulario', `Vas a
