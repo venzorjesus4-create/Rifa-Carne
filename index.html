@@ -6,143 +6,67 @@
     <title>Gran Rifa Parrillera</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- FIREBASE MODO CLÁSICO (A prueba de fallos en celulares) -->
+    <!-- FIREBASE MODO CLÁSICO -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
-    <!-- ESCÁNER DE DIAGNÓSTICO MEJORADO -->
+    <!-- ESCÁNER DE DIAGNÓSTICO -->
     <script>
         function mostrarErrorDiagnostico(mensaje) {
             function pintarError() {
                 const loading = document.getElementById('loading');
                 if (!loading) return;
-
                 loading.style.display = 'block';
                 loading.style.color = '#ef4444';
                 loading.style.whiteSpace = 'pre-line';
                 loading.textContent = mensaje;
             }
-
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', pintarError, { once: true });
             } else {
                 pintarError();
             }
         }
-
-        // Captura errores de JavaScript y también fallos al cargar archivos externos.
         window.addEventListener('error', function(e) {
             const recurso = (e.target && e.target.src) || e.filename || 'No identificado';
-            const mensaje = e.message || 'Error al cargar un recurso';
-
-            mostrarErrorDiagnostico(
-                'ERROR DETECTADO:\n' + mensaje +
-                '\n\nArchivo: ' + recurso +
-                '\nLínea: ' + (e.lineno || '?') +
-                '\nColumna: ' + (e.colno || '?')
-            );
+            mostrarErrorDiagnostico('ERROR DETECTADO:\n' + (e.message || 'Error desconocido') + '\nArchivo: ' + recurso + '\nLínea: ' + (e.lineno || '?'));
         }, true);
-
-        // Captura errores de promesas que no se gestionaron.
         window.addEventListener('unhandledrejection', function(e) {
-            const razon = e.reason && e.reason.message
-                ? e.reason.message
-                : String(e.reason);
-
+            const razon = e.reason && e.reason.message ? e.reason.message : String(e.reason);
             mostrarErrorDiagnostico('ERROR ASÍNCRONO:\n' + razon);
         });
     </script>
 
     <style>
-        body {
-            background-color: #0b1120;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Animaciones Visuales */
-        @keyframes parpadeoNeon {
-            0%, 100% { text-shadow: 0 0 5px #10b981, 0 0 10px #10b981; }
-            50% { text-shadow: 0 0 15px #10b981, 0 0 25px #10b981; }
-        }
-        @keyframes resplandorDoradoFuerte {
-            0%, 100% { box-shadow: 0 0 15px rgba(255, 193, 7, 0.4); border-color: #ffc107; }
-            50% { box-shadow: 0 0 35px rgba(255, 193, 7, 0.8); border-color: #ffeb3b; }
-        }
-        @keyframes latidoRojo {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.6; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        @keyframes movimientoFuego {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.8; }
-        }
-        @keyframes latidoUrgencia {
-            0%, 100% { transform: scale(1); text-shadow: none; }
-            50% { transform: scale(1.1); text-shadow: 0 0 15px #f97316; color: #ffedd5; }
-        }
+        body { background-color: #0b1120; color: #ffffff; font-family: Arial, sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        
+        /* Animaciones */
+        @keyframes parpadeoNeon { 0%, 100% { text-shadow: 0 0 5px #10b981, 0 0 10px #10b981; } 50% { text-shadow: 0 0 15px #10b981, 0 0 25px #10b981; } }
+        @keyframes resplandorDoradoFuerte { 0%, 100% { box-shadow: 0 0 15px rgba(255, 193, 7, 0.4); border-color: #ffc107; } 50% { box-shadow: 0 0 35px rgba(255, 193, 7, 0.8); border-color: #ffeb3b; } }
+        @keyframes latidoRojo { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.6; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes movimientoFuego { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.8; } }
+        @keyframes latidoUrgencia { 0%, 100% { transform: scale(1); text-shadow: none; } 50% { transform: scale(1.1); text-shadow: 0 0 15px #f97316; color: #ffedd5; } }
 
         .circulo-rojo { display: inline-block; animation: latidoRojo 1.2s infinite; }
         .fuego-animado { display: inline-block; animation: movimientoFuego 1.2s infinite alternate; margin-right: 5px; }
 
-        /* Encabezado */
         .header-container { text-align: center; margin-bottom: 20px; width: 100%; max-width: 400px; }
         .header-title { color: #f59e0b; font-size: 22px; font-weight: 900; margin-bottom: 8px; text-transform: uppercase; }
         .header-subtitle { font-size: 14px; color: #94a3b8; }
+        .text-green-neon { color: #10b981; font-weight: bold; animation: parpadeoNeon 1.5s infinite alternate; }
 
-        .text-green-neon {
-            color: #10b981;
-            font-weight: bold;
-            animation: parpadeoNeon 1.5s infinite alternate;
-        }
-
-        /* Tarjeta del Premio */
-        .prize-card {
-            background-color: #151c2c;
-            border-radius: 12px;
-            padding: 20px;
-            width: 100%;
-            max-width: 400px;
-            box-sizing: border-box;
-            position: relative;
-            margin-bottom: 20px;
-            border: 2px solid #ffc107;
-            animation: resplandorDoradoFuerte 2s infinite alternate;
-        }
-        .badge-yellow {
-            position: absolute;
-            top: -10px;
-            right: 15px;
-            background-color: #facc15;
-            color: #1e293b;
-            font-size: 10px;
-            font-weight: 900;
-            padding: 4px 10px;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
+        .prize-card { background-color: #151c2c; border-radius: 12px; padding: 20px; width: 100%; max-width: 400px; box-sizing: border-box; position: relative; margin-bottom: 20px; border: 2px solid #ffc107; animation: resplandorDoradoFuerte 2s infinite alternate; }
+        .badge-yellow { position: absolute; top: -10px; right: 15px; background-color: #facc15; color: #1e293b; font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
         .prize-title { color: #ffffff; font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 20px; }
         .prize-item { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; font-size: 15px; font-weight: 500; }
         .prize-footer { border-top: 1px solid #334155; padding-top: 15px; margin-top: 5px; font-size: 12px; color: #94a3b8; font-style: italic; text-align: center; line-height: 1.5; }
-
         .text-yellow-glow { color: #ffc107; font-weight: bold; text-shadow: 0 0 10px rgba(255, 193, 7, 0.8); }
 
-        /* Botones Sociales */
         .action-buttons { display: flex; gap: 10px; width: 100%; max-width: 400px; margin-bottom: 20px; }
-        .btn {
-            flex: 1; padding: 12px; border-radius: 8px; text-align: center; text-decoration: none;
-            color: white; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;
-        }
+        .btn { flex: 1; padding: 12px; border-radius: 8px; text-align: center; text-decoration: none; color: white; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer; }
         .btn-wa { background-color: #25d366; }
         .btn-fb { background-color: #1877f2; }
 
-        /* Tarjetas */
         .card { background-color: #151c2c; border-radius: 12px; padding: 20px; margin-bottom: 20px; width: 100%; max-width: 400px; box-sizing: border-box; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .info-text { font-size: 13px; color: #94a3b8; line-height: 1.6; }
         .info-text strong { color: #ffffff; }
@@ -150,7 +74,6 @@
         .meta-title { color: #f97316; font-size: 15px; font-weight: bold; text-align: center; margin-bottom: 10px; }
         .meta-text { font-size: 13px; color: #94a3b8; text-align: center; line-height: 1.5; }
 
-        /* Estadísticas y Buscador */
         .stats-container { display: flex; justify-content: space-between; }
         .stat-box { width: 50%; text-align: center; }
         .stat-divider { width: 1px; background-color: #334155; }
@@ -161,46 +84,23 @@
         .search-container { position: relative; width: 100%; max-width: 400px; margin-bottom: 20px; }
         .search-input { width: 100%; background-color: #1e293b; border: 1px solid #334155; color: #ffffff; padding: 15px 40px 15px 15px; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; }
         .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
-
+        
         #loading { color: #f97316; font-weight: bold; margin-top: 10px; text-align: center; font-size: 14px; }
-
-        /* Grid de Boletos */
+        
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; max-width: 400px; margin-top: 20px; }
-
-        .ticket { 
-            background-color: #1e293b; border: 1px solid #334155; color: #ffffff; border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.3s;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            aspect-ratio: 1 / 1; overflow: hidden; padding: 4px; box-sizing: border-box;
-        }
+        .ticket { background-color: #1e293b; border: 1px solid #334155; color: #ffffff; border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.3s; display: flex; flex-direction: column; justify-content: center; align-items: center; aspect-ratio: 1 / 1; overflow: hidden; padding: 4px; box-sizing: border-box; }
         .ticket:hover { background-color: #334155; transform: scale(1.05); }
-
-        .ticket.sold { 
-            background: linear-gradient(135deg, #ef4444, #991b1b); border-color: #fca5a5; color: white; 
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.7); transform: scale(1); cursor: pointer; 
-        }
-
+        .ticket.sold { background: linear-gradient(135deg, #ef4444, #991b1b); border-color: #fca5a5; color: white; box-shadow: 0 0 10px rgba(239, 68, 68, 0.7); transform: scale(1); cursor: pointer; }
         .ticket-number { font-size: 18px; font-weight: 900; line-height: 1; }
+        .ticket-name { font-size: 11px; font-weight: 700; margin-top: 4px; width: 100%; line-height: 1.1; word-wrap: break-word; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-transform: capitalize; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
 
-        .ticket-name {
-            font-size: 11px; font-weight: 700; margin-top: 4px; width: 100%; line-height: 1.1; word-wrap: break-word; 
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-            text-transform: capitalize; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-        }
-
-        /* Candado Administrador */
         .admin-footer { width: 100%; max-width: 400px; text-align: center; margin-top: 30px; padding-bottom: 20px; }
         .btn-candado { background: none; border: none; font-size: 20px; cursor: pointer; opacity: 0.3; transition: opacity 0.3s; color: #94a3b8; }
         .btn-candado:hover { opacity: 1; }
 
-        /* Modales Personalizados */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(11, 17, 32, 0.85); backdrop-filter: blur(5px);
-            z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px;
-        }
-        .modal-card {
-            background-color: #151c2c; border: 1px solid #f97316; border-radius: 12px; padding: 25px;
-            width: 100%; max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); text-align: center;
-        }
+        /* Modales */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(11, 17, 32, 0.85); backdrop-filter: blur(5px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-card { background-color: #151c2c; border: 1px solid #f97316; border-radius: 12px; padding: 25px; width: 100%; max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); text-align: center; }
         .modal-message { color: #fff; font-size: 15px; margin-bottom: 20px; line-height: 1.5; }
         .modal-message strong { color: #facc15; }
         .modal-input { width: 100%; margin-bottom: 20px; text-align: center; }
@@ -275,7 +175,7 @@
         </div>
     </div>
 
-    <!-- LÓGICA DE JAVASCRIPT SIN MÓDULOS -->
+    <!-- LÓGICA DE JAVASCRIPT: MODO CLÁSICO (Sin Async/Await) -->
     <script>
         const MI_NUMERO_WHATSAPP = "526451109290"; 
         const MI_PAGINA_FACEBOOK = "https://www.facebook.com/share/1GesdvKuki/";
@@ -293,7 +193,6 @@
             appId: "1:922361885670:web:fb29085d2e498d0f519c27"
         };
 
-        // Iniciar Firebase Clásico
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const ticketsRef = db.ref('boletos');
@@ -362,23 +261,24 @@
             });
         }
 
-        document.getElementById('btnCandado').addEventListener('click', async function() {
+        document.getElementById('btnCandado').addEventListener('click', function() {
             if (esAdmin) {
-                await mostrarModal('alerta', "Ya estás en Modo Administrador 🔓");
+                mostrarModal('alerta', "Ya estás en Modo Administrador 🔓");
                 return;
             }
-            const pinIngresado = await mostrarModal('formulario', "🔒 <strong>Área de Administrador</strong><br><br>Ingresa tu PIN de seguridad:");
-            if (pinIngresado && licuadoraMatematica(pinIngresado) === PIN_ENCRIPTADO) {
-                esAdmin = true;
-                const btn = document.getElementById('btnCandado');
-                btn.textContent = "🔓 Modo Administrador Activo";
-                btn.style.color = "#10b981";
-                btn.style.opacity = "1";
-                btn.style.fontSize = "14px";
-                await mostrarModal('alerta', "✅ Modo Administrador activado.<br><br>Ahora puedes registrar nombres o <strong>tocar un boleto rojo para liberarlo</strong>.");
-            } else if (pinIngresado) {
-                await mostrarModal('alerta', "❌ PIN incorrecto.");
-            }
+            mostrarModal('formulario', "🔒 <strong>Área de Administrador</strong><br><br>Ingresa tu PIN de seguridad:").then(function(pinIngresado) {
+                if (pinIngresado && licuadoraMatematica(pinIngresado) === PIN_ENCRIPTADO) {
+                    esAdmin = true;
+                    const btn = document.getElementById('btnCandado');
+                    btn.textContent = "🔓 Modo Administrador Activo";
+                    btn.style.color = "#10b981";
+                    btn.style.opacity = "1";
+                    btn.style.fontSize = "14px";
+                    mostrarModal('alerta', "✅ Modo Administrador activado.<br><br>Ahora puedes registrar nombres o <strong>tocar un boleto rojo para liberarlo</strong>.");
+                } else if (pinIngresado) {
+                    mostrarModal('alerta', "❌ PIN incorrecto.");
+                }
+            });
         });
 
         ticketsRef.on('value', function(snapshot) {
@@ -424,4 +324,31 @@
 
             let quedan = TOTAL_BOLETOS - ocupados;
             spanOcupados.textContent = ocupados;
-            sp
+            spanQuedan.textContent = quedan;
+            
+            let velocidad = Math.max(0.3, (quedan / TOTAL_BOLETOS) * 3);
+            spanQuedan.style.animation = "latidoUrgencia " + velocidad + "s infinite alternate";
+        }
+
+        searchInput.addEventListener('input', function(e) {
+            renderTickets(e.target.value);
+        });
+
+        function procesarBoleto(numero, isSold, ownerName) {
+            const numFormateado = numero.toString().padStart(3, '0');
+            
+            if (esAdmin) {
+                if (isSold) {
+                    mostrarModal('confirmacion', "El boleto <strong>" + numFormateado + "</strong> está apartado por <strong>" + ownerName + "</strong>.<br><br>¿Deseas LIBERAR este número?").then(function(liberar) {
+                        if (liberar) {
+                            db.ref('boletos/' + numero).remove();
+                        }
+                    });
+                } else {
+                    mostrarModal('formulario', "Vas a registrar el boleto <strong>" + numFormateado + "</strong>.<br><br>Ingresa el nombre del participante:").then(function(nombre) {
+                        if (nombre && nombre.trim() !== "") {
+                            db.ref('boletos/' + numero).set({
+                                vendido: true,
+                                nombre: nombre.trim()
+                            });
+        
