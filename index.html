@@ -17,15 +17,27 @@
             align-items: center;
         }
 
-        /* Animaciones Visuales */
+        /* Animaciones Visuales Mejoradas */
         @keyframes parpadeoNeon {
             0%, 100% { text-shadow: 0 0 5px #10b981, 0 0 10px #10b981; }
             50% { text-shadow: 0 0 15px #10b981, 0 0 25px #10b981; }
         }
-        @keyframes resplandorDorado {
-            0%, 100% { box-shadow: 0 0 10px rgba(245, 158, 11, 0.2); border-color: #f59e0b; }
-            50% { box-shadow: 0 0 25px rgba(245, 158, 11, 0.7); border-color: #fbbf24; }
+        @keyframes resplandorDoradoFuerte {
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 193, 7, 0.4); border-color: #ffc107; }
+            50% { box-shadow: 0 0 35px rgba(255, 193, 7, 0.8); border-color: #ffeb3b; }
         }
+        @keyframes latidoRojo {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.6; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes movimientoFuego {
+            0%, 100% { transform: scale(1) rotate(-3deg); opacity: 1; }
+            50% { transform: scale(1.2) rotate(3deg); opacity: 0.8; }
+        }
+
+        .circulo-rojo { display: inline-block; animation: latidoRojo 1.2s infinite; }
+        .fuego-animado { display: inline-block; animation: movimientoFuego 1s infinite alternate; }
 
         /* Encabezado */
         .header-container { text-align: center; margin-bottom: 20px; width: 100%; max-width: 400px; }
@@ -48,7 +60,8 @@
             box-sizing: border-box;
             position: relative;
             margin-bottom: 20px;
-            animation: resplandorDorado 2s infinite alternate;
+            border: 2px solid #ffc107;
+            animation: resplandorDoradoFuerte 2s infinite alternate;
         }
         .badge-yellow {
             position: absolute;
@@ -65,7 +78,12 @@
         .prize-title { color: #ffffff; font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 20px; }
         .prize-item { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; font-size: 15px; font-weight: 500; }
         .prize-footer { border-top: 1px solid #334155; padding-top: 15px; margin-top: 5px; font-size: 12px; color: #94a3b8; font-style: italic; text-align: center; line-height: 1.5; }
-        .text-yellow-glow { color: #facc15; font-weight: bold; }
+        
+        .text-yellow-glow { 
+            color: #ffc107; 
+            font-weight: bold; 
+            text-shadow: 0 0 10px rgba(255, 193, 7, 0.8);
+        }
 
         /* Botones Sociales */
         .action-buttons { display: flex; gap: 10px; width: 100%; max-width: 400px; margin-bottom: 20px; }
@@ -98,11 +116,67 @@
         
         #loading { color: #f97316; font-weight: bold; margin-top: 10px; text-align: center; font-size: 14px; }
         
-        /* Grid de Boletos */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 10px; width: 100%; max-width: 400px; margin-top: 20px; }
-        .ticket { background-color: #1e293b; border: 1px solid #334155; color: #ffffff; padding: 15px 0; border-radius: 8px; text-align: center; font-weight: bold; cursor: pointer; transition: all 0.3s; }
-        .ticket:hover { background-color: #334155; }
-        .ticket.sold { background-color: #ef4444; border-color: #ef4444; cursor: not-allowed; color: white; }
+        /* ==========================================
+           GRID DE BOLETOS (4 POR FILA Y CUADRADOS)
+           ========================================== */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); /* Fuerza 4 cuadros exactos por fila */
+            gap: 10px; 
+            width: 100%; 
+            max-width: 400px; 
+            margin-top: 20px; 
+        }
+        
+        .ticket { 
+            background-color: #1e293b; 
+            border: 1px solid #334155; 
+            color: #ffffff; 
+            border-radius: 8px; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            aspect-ratio: 1 / 1; /* Cuadrados perfectos */
+            overflow: hidden; 
+            padding: 4px;
+            box-sizing: border-box;
+        }
+        
+        .ticket:hover { background-color: #334155; transform: scale(1.05); }
+        
+        .ticket.sold { 
+            background: linear-gradient(135deg, #ef4444, #991b1b);
+            border-color: #fca5a5; 
+            cursor: not-allowed; 
+            color: white; 
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
+            transform: scale(1);
+        }
+        
+        .ticket-number {
+            font-size: 18px; /* Número más grande */
+            font-weight: 900;
+            line-height: 1;
+        }
+        
+        .ticket-name {
+            font-size: 11px; /* Nombre más legible */
+            font-weight: 700;
+            margin-top: 4px;
+            width: 100%;
+            line-height: 1.1;
+            word-wrap: break-word; 
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* Acomoda hasta en 2 renglones */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-transform: capitalize;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
 
         /* Candado Administrador */
         .admin-footer { width: 100%; max-width: 400px; text-align: center; margin-top: 30px; padding-bottom: 20px; }
@@ -132,11 +206,11 @@
     </div>
 
     <div class="card info-text">
-        🔴 El sorteo se realizará <strong>EN VIVO</strong>. Al adquirir tu boleto, serás agregado a nuestro <span class="text-green">grupo exclusivo de WhatsApp</span> donde podrás seguir de cerca el sorteo.
+        <span class="circulo-rojo">🔴</span> El sorteo se realizará <strong>EN VIVO</strong>. Al adquirir tu boleto, serás agregado a nuestro <span class="text-green">grupo exclusivo de WhatsApp</span> donde podrás seguir de cerca el sorteo.
     </div>
 
     <div class="card">
-        <div class="meta-title">¡Ayúdanos a llegar a la meta! 🔥</div>
+        <div class="meta-title">¡Ayúdanos a llegar a la meta! <span class="fuego-animado">🔥</span></div>
         <div class="meta-text">Entre más rápido se vendan los boletos, más pronto haremos el gran sorteo. ¡Comparte esta página!</div>
     </div>
 
@@ -163,7 +237,7 @@
 
     <!-- Candado Oculto del Administrador -->
     <div class="admin-footer">
-        <button id="btnCandado" class="btn-candado">🔒</button>
+        <button id="btnCandado" class="btn-candado" title="Modo Administrador">🔒</button>
     </div>
 
     <!-- Firebase y Lógica -->
@@ -171,6 +245,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+        // Enlaces de tu contacto directo
         const MI_NUMERO_WHATSAPP = "526451109290"; 
         const MI_PAGINA_FACEBOOK = "https://www.facebook.com/share/1GesdvKuki/";
         
@@ -247,23 +322,26 @@
                 const numStr = i.toString().padStart(3, '0');
                 const boleto = boletosData[i];
                 const isSold = boleto && boleto.vendido;
-                const ownerName = isSold ? boleto.nombre.toLowerCase() : "";
+                const ownerName = isSold ? boleto.nombre : "";
                 
                 if (isSold) ocupados++;
 
-                if (filterText && !numStr.includes(filterText) && !ownerName.includes(filterText.toLowerCase())) {
+                if (filterText && !numStr.includes(filterText) && !ownerName.toLowerCase().includes(filterText.toLowerCase())) {
                     continue;
                 }
 
                 const div = document.createElement('div');
-                div.className = `ticket ${isSold ? 'sold' : ''}`;
-                div.textContent = numStr;
                 
                 if (!isSold) {
+                    div.className = 'ticket';
+                    div.innerHTML = `<div class="ticket-number">${numStr}</div>`;
                     div.onclick = () => procesarBoleto(i);
                 } else {
-                    div.title = `Apartado por: ${boleto.nombre}`;
+                    div.className = 'ticket sold';
+                    div.innerHTML = `<div class="ticket-number">${numStr}</div><div class="ticket-name">${ownerName}</div>`;
+                    div.title = `Apartado por: ${ownerName}`;
                 }
+                
                 grid.appendChild(div);
             }
             
