@@ -33,7 +33,7 @@
         }
         @keyframes movimientoFuego {
             0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.8; } /* Solo escala, sin inclinación */
+            50% { transform: scale(1.3); opacity: 0.8; }
         }
         @keyframes latidoUrgencia {
             0%, 100% { transform: scale(1); text-shadow: none; }
@@ -132,7 +132,7 @@
         
         .ticket.sold { 
             background: linear-gradient(135deg, #ef4444, #991b1b); border-color: #fca5a5; color: white; 
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.7); transform: scale(1); cursor: pointer; /* Ahora es clickeable para el admin */
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.7); transform: scale(1); cursor: pointer; 
         }
         
         .ticket-number { font-size: 18px; font-weight: 900; line-height: 1; }
@@ -254,7 +254,7 @@
             projectId: "rifas-cananea",
             storageBucket: "rifas-cananea.firebasestorage.app",
             messagingSenderId: "685658823595",
-            appId: "1:685658823595:web:4246a4a8ada0b11c0e90ee"
+            appId: "1:685658823595:web:a892b6814fb3a34c0e90ee"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -377,7 +377,7 @@
                 }
 
                 const div = document.createElement('div');
-                div.onclick = () => procesarBoleto(i, isSold, ownerName); // Siempre clickeable
+                div.onclick = () => procesarBoleto(i, isSold, ownerName); 
                 
                 if (!isSold) {
                     div.className = 'ticket';
@@ -390,13 +390,10 @@
                 grid.appendChild(div);
             }
             
-            // Actualizar contadores y efecto de urgencia
             let quedan = TOTAL_BOLETOS - ocupados;
             spanOcupados.textContent = ocupados;
             spanQuedan.textContent = quedan;
             
-            // Efecto intermitente que se acelera conforme quedan menos números
-            // Empieza en 3 segundos (lento) y baja hasta 0.3 segundos (muy rápido)
             let velocidad = Math.max(0.3, (quedan / TOTAL_BOLETOS) * 3);
             spanQuedan.style.animation = `latidoUrgencia ${velocidad}s infinite alternate`;
         }
@@ -410,8 +407,12 @@
             
             if (esAdmin) {
                 if (isSold) {
-                    // Modo Admin: Liberar boleto ocupado
                     const liberar = await mostrarModal('confirmacion', `El boleto <strong>${numFormateado}</strong> está apartado por <strong>${ownerName}</strong>.<br><br>¿Deseas LIBERAR este número?`);
                     if (liberar) {
                         set(ref(db, `boletos/${numero}`), null);
- 
+                    }
+                } else {
+                    const nombre = await mostrarModal('formulario', `Vas a registrar el boleto <strong>${numFormateado}</strong>.<br><br>Ingresa el nombre del participante:`);
+                    if (nombre && nombre.trim() !== "") {
+                        set(ref(db, `boletos/${numero}`), {
+                            vendido
