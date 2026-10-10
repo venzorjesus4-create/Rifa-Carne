@@ -5,19 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gran Rifa Parrillera</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- FIREBASE MODO CLÁSICO (A prueba de fallos en celulares) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
-    <!-- ESCÁNER DE DIAGNÓSTICO -->
+    <!-- ESCÁNER DE DIAGNÓSTICO MEJORADO -->
     <script>
-        window.addEventListener('error', function(e) {
-            const loading = document.getElementById('loading');
-            if(loading) {
+        function mostrarErrorDiagnostico(mensaje) {
+            function pintarError() {
+                const loading = document.getElementById('loading');
+                if (!loading) return;
+
+                loading.style.display = 'block';
                 loading.style.color = '#ef4444';
-                loading.innerHTML = "❌ ERROR DETECTADO:<br><br>" + e.message;
+                loading.style.whiteSpace = 'pre-line';
+                loading.textContent = mensaje;
             }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', pintarError, { once: true });
+            } else {
+                pintarError();
+            }
+        }
+
+        // Captura errores de JavaScript y también fallos al cargar archivos externos.
+        window.addEventListener('error', function(e) {
+            const recurso = (e.target && e.target.src) || e.filename || 'No identificado';
+            const mensaje = e.message || 'Error al cargar un recurso';
+
+            mostrarErrorDiagnostico(
+                'ERROR DETECTADO:\n' + mensaje +
+                '\n\nArchivo: ' + recurso +
+                '\nLínea: ' + (e.lineno || '?') +
+                '\nColumna: ' + (e.colno || '?')
+            );
+        }, true);
+
+        // Captura errores de promesas que no se gestionaron.
+        window.addEventListener('unhandledrejection', function(e) {
+            const razon = e.reason && e.reason.message
+                ? e.reason.message
+                : String(e.reason);
+
+            mostrarErrorDiagnostico('ERROR ASÍNCRONO:\n' + razon);
         });
     </script>
 
@@ -63,7 +95,7 @@
         .header-container { text-align: center; margin-bottom: 20px; width: 100%; max-width: 400px; }
         .header-title { color: #f59e0b; font-size: 22px; font-weight: 900; margin-bottom: 8px; text-transform: uppercase; }
         .header-subtitle { font-size: 14px; color: #94a3b8; }
-        
+
         .text-green-neon {
             color: #10b981;
             font-weight: bold;
@@ -98,7 +130,7 @@
         .prize-title { color: #ffffff; font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 20px; }
         .prize-item { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; font-size: 15px; font-weight: 500; }
         .prize-footer { border-top: 1px solid #334155; padding-top: 15px; margin-top: 5px; font-size: 12px; color: #94a3b8; font-style: italic; text-align: center; line-height: 1.5; }
-        
+
         .text-yellow-glow { color: #ffc107; font-weight: bold; text-shadow: 0 0 10px rgba(255, 193, 7, 0.8); }
 
         /* Botones Sociales */
@@ -129,26 +161,26 @@
         .search-container { position: relative; width: 100%; max-width: 400px; margin-bottom: 20px; }
         .search-input { width: 100%; background-color: #1e293b; border: 1px solid #334155; color: #ffffff; padding: 15px 40px 15px 15px; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; }
         .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
-        
+
         #loading { color: #f97316; font-weight: bold; margin-top: 10px; text-align: center; font-size: 14px; }
-        
+
         /* Grid de Boletos */
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; max-width: 400px; margin-top: 20px; }
-        
+
         .ticket { 
             background-color: #1e293b; border: 1px solid #334155; color: #ffffff; border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.3s;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             aspect-ratio: 1 / 1; overflow: hidden; padding: 4px; box-sizing: border-box;
         }
         .ticket:hover { background-color: #334155; transform: scale(1.05); }
-        
+
         .ticket.sold { 
             background: linear-gradient(135deg, #ef4444, #991b1b); border-color: #fca5a5; color: white; 
             box-shadow: 0 0 10px rgba(239, 68, 68, 0.7); transform: scale(1); cursor: pointer; 
         }
-        
+
         .ticket-number { font-size: 18px; font-weight: 900; line-height: 1; }
-        
+
         .ticket-name {
             font-size: 11px; font-weight: 700; margin-top: 4px; width: 100%; line-height: 1.1; word-wrap: break-word; 
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
@@ -225,7 +257,7 @@
     </div>
 
     <div id="loading">Conectando a la Base de Datos...<br><br>⏳</div>
-    
+
     <div class="grid" id="ticketGrid" style="display: none;"></div>
 
     <div class="admin-footer">
@@ -247,7 +279,7 @@
     <script>
         const MI_NUMERO_WHATSAPP = "526451109290"; 
         const MI_PAGINA_FACEBOOK = "https://www.facebook.com/share/1GesdvKuki/";
-        
+
         document.getElementById("btn-wa-top").href = "https://api.whatsapp.com/send?phone=" + MI_NUMERO_WHATSAPP;
         document.getElementById("btn-fb-top").href = MI_PAGINA_FACEBOOK;
 
@@ -271,7 +303,7 @@
         const searchInput = document.getElementById('searchInput');
         const spanQuedan = document.getElementById('quedan');
         const spanOcupados = document.getElementById('ocupados');
-        
+
         let boletosData = {};
         const TOTAL_BOLETOS = 200;
         let esAdmin = false; 
@@ -363,13 +395,13 @@
             if (!filterText) filterText = "";
             grid.innerHTML = '';
             let ocupados = 0;
-            
+
             for (let i = 1; i <= TOTAL_BOLETOS; i++) {
                 const numStr = i.toString().padStart(3, '0');
                 const boleto = boletosData[i];
                 const isSold = boleto && boleto.vendido;
                 const ownerName = isSold ? boleto.nombre : "";
-                
+
                 if (isSold) ocupados++;
 
                 if (filterText && !numStr.includes(filterText) && !ownerName.toLowerCase().includes(filterText.toLowerCase())) {
@@ -378,7 +410,7 @@
 
                 const div = document.createElement('div');
                 div.onclick = function() { procesarBoleto(i, isSold, ownerName); };
-                
+
                 if (!isSold) {
                     div.className = 'ticket';
                     div.innerHTML = '<div class="ticket-number">' + numStr + '</div>';
@@ -386,31 +418,10 @@
                     div.className = 'ticket sold';
                     div.innerHTML = '<div class="ticket-number">' + numStr + '</div><div class="ticket-name">' + ownerName + '</div>';
                 }
-                
+
                 grid.appendChild(div);
             }
-            
+
             let quedan = TOTAL_BOLETOS - ocupados;
             spanOcupados.textContent = ocupados;
-            spanQuedan.textContent = quedan;
-            
-            let velocidad = Math.max(0.3, (quedan / TOTAL_BOLETOS) * 3);
-            spanQuedan.style.animation = "latidoUrgencia " + velocidad + "s infinite alternate";
-        }
-
-        searchInput.addEventListener('input', function(e) {
-            renderTickets(e.target.value);
-        });
-
-        async function procesarBoleto(numero, isSold, ownerName) {
-            const numFormateado = numero.toString().padStart(3, '0');
-            
-            if (esAdmin) {
-                if (isSold) {
-                    const liberar = await mostrarModal('confirmacion', "El boleto <strong>" + numFormateado + "</strong> está apartado por <strong>" + ownerName + "</strong>.<br><br>¿Deseas LIBERAR este número?");
-                    if (liberar) {
-                        db.ref('boletos/' + numero).remove();
-                    }
-                } else {
-                    const nombre = await mostrarModal('formulario', "Vas a registrar el boleto <strong>" + numFormateado + "</strong>.<br><br>Ingresa el nombre del participante:");
- 
+            sp
