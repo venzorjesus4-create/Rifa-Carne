@@ -6,6 +6,10 @@
     <title>Gran Rifa Parrillera</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- FIREBASE MODO CLÁSICO (A prueba de fallos en celulares) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
     <!-- ESCÁNER DE DIAGNÓSTICO -->
     <script>
         window.addEventListener('error', function(e) {
@@ -13,13 +17,6 @@
             if(loading) {
                 loading.style.color = '#ef4444';
                 loading.innerHTML = "❌ ERROR DETECTADO:<br><br>" + e.message;
-            }
-        });
-        window.addEventListener('unhandledrejection', function(e) {
-            const loading = document.getElementById('loading');
-            if(loading) {
-                loading.style.color = '#ef4444';
-                loading.innerHTML = "❌ ERROR DE RED:<br><br>" + (e.reason || "Conexión rechazada");
             }
         });
     </script>
@@ -36,7 +33,7 @@
             align-items: center;
         }
 
-        /* Animaciones Visuales Mejoradas */
+        /* Animaciones Visuales */
         @keyframes parpadeoNeon {
             0%, 100% { text-shadow: 0 0 5px #10b981, 0 0 10px #10b981; }
             50% { text-shadow: 0 0 15px #10b981, 0 0 25px #10b981; }
@@ -102,11 +99,7 @@
         .prize-item { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; font-size: 15px; font-weight: 500; }
         .prize-footer { border-top: 1px solid #334155; padding-top: 15px; margin-top: 5px; font-size: 12px; color: #94a3b8; font-style: italic; text-align: center; line-height: 1.5; }
         
-        .text-yellow-glow { 
-            color: #ffc107; 
-            font-weight: bold; 
-            text-shadow: 0 0 10px rgba(255, 193, 7, 0.8);
-        }
+        .text-yellow-glow { color: #ffc107; font-weight: bold; text-shadow: 0 0 10px rgba(255, 193, 7, 0.8); }
 
         /* Botones Sociales */
         .action-buttons { display: flex; gap: 10px; width: 100%; max-width: 400px; margin-bottom: 20px; }
@@ -250,15 +243,12 @@
         </div>
     </div>
 
-    <!-- Firebase y Lógica -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
+    <!-- LÓGICA DE JAVASCRIPT SIN MÓDULOS -->
+    <script>
         const MI_NUMERO_WHATSAPP = "526451109290"; 
         const MI_PAGINA_FACEBOOK = "https://www.facebook.com/share/1GesdvKuki/";
         
-        document.getElementById("btn-wa-top").href = `https://api.whatsapp.com/send?phone=${MI_NUMERO_WHATSAPP}`;
+        document.getElementById("btn-wa-top").href = "https://api.whatsapp.com/send?phone=" + MI_NUMERO_WHATSAPP;
         document.getElementById("btn-fb-top").href = MI_PAGINA_FACEBOOK;
 
         const firebaseConfig = {
@@ -271,9 +261,10 @@
             appId: "1:922361885670:web:fb29085d2e498d0f519c27"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const ticketsRef = ref(db, 'boletos');
+        // Iniciar Firebase Clásico
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const ticketsRef = db.ref('boletos');
 
         const grid = document.getElementById('ticketGrid');
         const loading = document.getElementById('loading');
@@ -295,7 +286,7 @@
         const PIN_ENCRIPTADO = "6066626264606064";
 
         function mostrarModal(tipo, mensaje) {
-            return new Promise((resolve) => {
+            return new Promise(function(resolve) {
                 const overlay = document.getElementById('customModal');
                 const msgEl = document.getElementById('modalMessage');
                 const inputEl = document.getElementById('modalInput');
@@ -319,27 +310,27 @@
                     btnCancel.style.display = 'block';
                     btnCancel.textContent = 'Cancelar';
                     btnAccept.textContent = 'Guardar';
-                    setTimeout(() => inputEl.focus(), 100);
+                    setTimeout(function() { inputEl.focus(); }, 100);
                 }
 
                 overlay.style.display = 'flex';
 
-                const limpiar = () => {
+                const limpiar = function() {
                     overlay.style.display = 'none';
                     btnCancel.onclick = null;
                     btnAccept.onclick = null;
                 };
 
-                btnCancel.onclick = () => { limpiar(); resolve(null); };
-                btnAccept.onclick = () => { 
+                btnCancel.onclick = function() { limpiar(); resolve(null); };
+                btnAccept.onclick = function() { 
                     limpiar(); 
-                    if (tipo === 'formulario') resolve(inputEl.value);
-                    else resolve(true); 
+                    if (tipo === 'formulario') { resolve(inputEl.value); }
+                    else { resolve(true); }
                 };
             });
         }
 
-        document.getElementById('btnCandado').addEventListener('click', async () => {
+        document.getElementById('btnCandado').addEventListener('click', async function() {
             if (esAdmin) {
                 await mostrarModal('alerta', "Ya estás en Modo Administrador 🔓");
                 return;
@@ -358,17 +349,18 @@
             }
         });
 
-        onValue(ticketsRef, (snapshot) => {
+        ticketsRef.on('value', function(snapshot) {
             loading.style.display = 'none';
             grid.style.display = 'grid';
             boletosData = snapshot.val() || {};
-            renderTickets();
-        }, (error) => {
+            renderTickets("");
+        }, function(error) {
             loading.style.color = '#ef4444';
             loading.innerHTML = "❌ ERROR DE CONEXIÓN FIREBASE:<br><br>" + error.message;
         });
 
-        function renderTickets(filterText = "") {
+        function renderTickets(filterText) {
+            if (!filterText) filterText = "";
             grid.innerHTML = '';
             let ocupados = 0;
             
@@ -385,14 +377,14 @@
                 }
 
                 const div = document.createElement('div');
-                div.onclick = () => procesarBoleto(i, isSold, ownerName); 
+                div.onclick = function() { procesarBoleto(i, isSold, ownerName); };
                 
                 if (!isSold) {
                     div.className = 'ticket';
-                    div.innerHTML = `<div class="ticket-number">${numStr}</div>`;
+                    div.innerHTML = '<div class="ticket-number">' + numStr + '</div>';
                 } else {
                     div.className = 'ticket sold';
-                    div.innerHTML = `<div class="ticket-number">${numStr}</div><div class="ticket-name">${ownerName}</div>`;
+                    div.innerHTML = '<div class="ticket-number">' + numStr + '</div><div class="ticket-name">' + ownerName + '</div>';
                 }
                 
                 grid.appendChild(div);
@@ -403,10 +395,10 @@
             spanQuedan.textContent = quedan;
             
             let velocidad = Math.max(0.3, (quedan / TOTAL_BOLETOS) * 3);
-            spanQuedan.style.animation = `latidoUrgencia ${velocidad}s infinite alternate`;
+            spanQuedan.style.animation = "latidoUrgencia " + velocidad + "s infinite alternate";
         }
 
-        searchInput.addEventListener('input', (e) => {
+        searchInput.addEventListener('input', function(e) {
             renderTickets(e.target.value);
         });
 
@@ -415,9 +407,10 @@
             
             if (esAdmin) {
                 if (isSold) {
-                    const liberar = await mostrarModal('confirmacion', `El boleto <strong>${numFormateado}</strong> está apartado por <strong>${ownerName}</strong>.<br><br>¿Deseas LIBERAR este número?`);
+                    const liberar = await mostrarModal('confirmacion', "El boleto <strong>" + numFormateado + "</strong> está apartado por <strong>" + ownerName + "</strong>.<br><br>¿Deseas LIBERAR este número?");
                     if (liberar) {
-                        set(ref(db, `boletos/${numero}`), null);
+                        db.ref('boletos/' + numero).remove();
                     }
                 } else {
-       
+                    const nombre = await mostrarModal('formulario', "Vas a registrar el boleto <strong>" + numFormateado + "</strong>.<br><br>Ingresa el nombre del participante:");
+ 
