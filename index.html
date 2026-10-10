@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gran Rifa Parrillera</title>
+    <!-- Librería para los íconos reales de WhatsApp, Facebook y la Lupa -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             background-color: #0b1120;
@@ -15,6 +17,115 @@
             flex-direction: column;
             align-items: center;
         }
+
+        /* Encabezado Principal */
+        .header-container {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .header-title {
+            color: #f59e0b;
+            font-size: 22px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .header-subtitle {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        .text-green-neon {
+            color: #10b981;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+        }
+
+        /* Tarjeta del Gran Premio */
+        .prize-card {
+            background-color: #151c2c;
+            border: 1px solid #f59e0b;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .badge-yellow {
+            position: absolute;
+            top: -10px;
+            right: 15px;
+            background-color: #facc15;
+            color: #1e293b;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 4px 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .prize-title {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .prize-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .prize-footer {
+            border-top: 1px solid #334155;
+            padding-top: 15px;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #94a3b8;
+            font-style: italic;
+            text-align: center;
+            line-height: 1.5;
+        }
+        .text-yellow-glow {
+            color: #facc15;
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        /* Botones de Acción Inmediata */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+        }
+        .btn-wa { background-color: #25d366; }
+        .btn-fb { background-color: #1877f2; }
+
+        /* Tarjetas Secundarias */
         .card {
             background-color: #151c2c;
             border-radius: 12px;
@@ -24,51 +135,94 @@
             max-width: 400px;
             box-sizing: border-box;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            text-align: center;
         }
-        .card-info {
-            font-size: 14px;
+        .info-text {
+            font-size: 13px;
             color: #94a3b8;
-            line-height: 1.5;
-            text-align: left;
+            line-height: 1.6;
         }
-        .card-info strong { color: #fff; }
+        .info-text strong { color: #ffffff; }
         .text-green { color: #10b981; font-weight: bold; }
         .text-orange { color: #f97316; font-weight: bold; }
-        
+
+        /* Contenedor Meta */
+        .meta-title {
+            color: #f97316;
+            font-size: 15px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .meta-text {
+            font-size: 13px;
+            color: #94a3b8;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        /* Estadísticas */
         .stats-container {
             display: flex;
             justify-content: space-between;
         }
         .stat-box {
-            width: 48%;
+            width: 50%;
             text-align: center;
         }
-        .stat-label { font-size: 12px; color: #94a3b8; font-weight: bold; letter-spacing: 1px; }
-        .stat-value { font-size: 32px; color: #f97316; font-weight: bold; margin-top: 5px; }
-        .stat-value.white { color: #fff; }
+        .stat-divider {
+            width: 1px;
+            background-color: #334155;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .stat-value {
+            font-size: 32px;
+            color: #f97316;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .stat-value.white { color: #ffffff; }
 
-        .search-input {
+        /* Buscador */
+        .search-container {
+            position: relative;
             width: 100%;
             max-width: 400px;
+            margin-bottom: 20px;
+        }
+        .search-input {
+            width: 100%;
             background-color: #1e293b;
             border: 1px solid #334155;
-            color: #fff;
-            padding: 15px;
+            color: #ffffff;
+            padding: 15px 40px 15px 15px; /* Espacio extra a la derecha para la lupa */
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 14px;
             box-sizing: border-box;
-            margin-bottom: 20px;
             outline: none;
         }
-        
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        /* Mensaje de Carga */
         #loading {
             color: #f97316;
             font-weight: bold;
-            margin-top: 20px;
+            margin-top: 10px;
             text-align: center;
+            font-size: 14px;
         }
         
+        /* Grid de Boletos */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
@@ -80,72 +234,102 @@
         .ticket {
             background-color: #1e293b;
             border: 1px solid #334155;
-            color: #fff;
+            color: #ffffff;
             padding: 15px 0;
             border-radius: 8px;
             text-align: center;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s;
+        }
+        .ticket:hover {
+            background-color: #334155;
         }
         .ticket.sold {
             background-color: #ef4444;
             border-color: #ef4444;
             cursor: not-allowed;
-        }
-        
-        .social-buttons {
-            display: flex;
-            gap: 10px;
-            width: 100%;
-            max-width: 400px;
-            margin-top: 20px;
-        }
-        .btn {
-            flex: 1;
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            text-decoration: none;
             color: white;
-            font-weight: bold;
-            font-size: 14px;
         }
-        .btn-wa { background-color: #25D366; }
-        .btn-fb { background-color: #1877F2; }
     </style>
 </head>
 <body>
 
-    <div class="card card-info">
-        🔥 <span class="text-orange">GRAN PREMIO:</span> 5 kg de carne, un 48 de cerveza y $2,000 MXN en efectivo (Opción a $4,000).<br><br>
-        🎟️ <strong>Valor del boleto:</strong> $50 MXN.<br><br>
-        🔴 El sorteo se realizará <strong>EN VIVO</strong>. Al apartar tu boleto, serás agregado a nuestro <span class="text-green">grupo exclusivo de WhatsApp</span> para seguir de cerca el sorteo.
+    <!-- Encabezado -->
+    <div class="header-container">
+        <div class="header-title">GRAN RIFA PARRILLERA</div>
+        <div class="header-subtitle">Valor del boleto: <span class="text-green-neon">$50 MXN</span></div>
     </div>
 
+    <!-- Tarjeta del Premio Principal -->
+    <div class="prize-card">
+        <div class="badge-yellow">¡TODO EN UNO!</div>
+        <div class="prize-title">GRAN PREMIO ÚNICO</div>
+        
+        <div class="prize-item">
+            <span>🥩</span> 5 kg de Carne para asar
+        </div>
+        <div class="prize-item">
+            <span>🍻</span> Un 48 de Cerveza
+        </div>
+        <div class="prize-item">
+            <span>💵</span> <span class="text-green-neon">$2,000 MXN en efectivo</span>
+        </div>
+        
+        <div class="prize-footer">
+            Opcional: Si el ganador lo prefiere, puede elegir llevarse <span class="text-yellow-glow">$4,000 MXN en efectivo absoluto.</span>
+        </div>
+    </div>
+
+    <!-- Botones Sociales -->
+    <div class="action-buttons">
+        <a href="https://wa.me/TUNUMERO" class="btn btn-wa" target="_blank">
+            <i class="fab fa-whatsapp"></i> Comprar en WhatsApp
+        </a>
+        <a href="https://facebook.com/TUPAGINA" class="btn btn-fb" target="_blank">
+            <i class="fab fa-facebook-f"></i> Página de Facebook
+        </a>
+    </div>
+
+    <!-- Tarjeta de Información (En Vivo) -->
+    <div class="card info-text">
+        🔴 El sorteo se realizará <strong>EN VIVO</strong>. Al adquirir tu boleto, serás agregado a nuestro <span class="text-green">grupo exclusivo de WhatsApp</span> donde podrás seguir de cerca el sorteo y enterarte de futuras rifas.
+    </div>
+
+    <!-- Tarjeta de Meta -->
+    <div class="card">
+        <div class="meta-title">¡Ayúdanos a llegar a la meta! 🔥</div>
+        <div class="meta-text">
+            Entre más rápido se vendan los boletos, más pronto haremos el gran sorteo. ¡Comparte esta página con tus amigos y familiares!
+        </div>
+    </div>
+
+    <!-- Tarjeta de Estadísticas -->
     <div class="card stats-container">
         <div class="stat-box">
             <div class="stat-label">QUEDAN</div>
             <div class="stat-value" id="quedan">200</div>
         </div>
-        <div class="stat-box" style="border-left: 1px solid #334155;">
+        <div class="stat-divider"></div>
+        <div class="stat-box">
             <div class="stat-label">OCUPADOS</div>
             <div class="stat-value white" id="ocupados">0</div>
         </div>
     </div>
 
-    <input type="text" id="searchInput" class="search-input" placeholder="Busca tu nombre o número...">
-
-    <div id="loading">Conectando a la Base de Datos...<br><br>🔒</div>
-    
-    <div class="grid" id="ticketGrid" style="display: none;"></div>
-
-    <div class="social-buttons">
-        <a href="https://wa.me/TUNUMERO" class="btn btn-wa" target="_blank">📲 WhatsApp</a>
-        <a href="https://facebook.com/TUPAGINA" class="btn btn-fb" target="_blank">📘 Facebook</a>
+    <!-- Buscador -->
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="Busca tu nombre o número...">
+        <i class="fas fa-search search-icon"></i>
     </div>
 
-    <!-- Firebase -->
+    <!-- Estado de Conexión -->
+    <div id="loading">Conectando a la Base de Datos...<br><br>🔒</div>
+    
+    <!-- Cuadrícula de Boletos -->
+    <div class="grid" id="ticketGrid" style="display: none;"></div>
+
+    <!-- Lógica y Base de Datos -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -173,6 +357,7 @@
         let boletosData = {};
         const TOTAL_BOLETOS = 200;
 
+        // 🔥 LA LICUADORA MATEMÁTICA 🔥
         function licuadoraMatematica(pin) {
             let resultado = "";
             for (let i = 0; i < pin.length; i++) {
