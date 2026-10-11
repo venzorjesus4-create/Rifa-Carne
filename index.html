@@ -1,355 +1,1082 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gran Rifa Parrillera</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gran Rifa Parrillera</title>
+<meta name="description" content="Rifa de 5 kg de carne para asar, 48 cervezas y $2,000 en efectivo (o $4,000 en efectivo). Boleto a $50. Mira los boletos disponibles y busca tu nombre.">
+<meta property="og:title" content="Gran Rifa Parrillera">
+<meta property="og:description" content="5 kg de carne para asar, 48 cervezas y $2,000 en efectivo. Boleto a $50. Mira qué números quedan libres.">
+<meta name="theme-color" content="#0B0B0C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: dark;
+  --carbon:#0B0B0C;
+  --hierro:#18181B;
+  --hierro2:#232327;
+  --borde:#34343A;
+  --brasa:#FF5B1F;
+  --ambar:#FFB020;
+  --oro:#FFC53D;
+  --ceniza:#F4F4F5;
+  --humo:#A1A1AA;
+  --verde:#25D366;
+  --fb:#166FE5;
+  --display:'Alfa Slab One', Rockwell, 'Roboto Slab', Georgia, serif;
+  --body:'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top, 0px);
+  padding-bottom:env(safe-area-inset-bottom, 0px);
+}
+html{scroll-padding-top:env(safe-area-inset-top, 0px);background:var(--carbon)}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none !important}
+body{margin:0;background:var(--carbon);color:var(--ceniza);font:400 17px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--ambar);outline-offset:2px}
+.wrap{max-width:820px;margin:0 auto;padding-left:18px;padding-right:18px}
 
-    <!-- FIREBASE MODO CLÁSICO -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+/* Avisos superiores */
+.adminbar{position:sticky;top:env(safe-area-inset-top, 0px);z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 18px;background:var(--ambar);color:var(--carbon);font-size:15px;line-height:1.3}
+.adminbar strong{display:block;font-size:16px}
+.btn-sm{flex:none;background:var(--carbon);color:var(--ceniza);border:0;border-radius:10px;padding:10px 16px;font:600 15px var(--body);cursor:pointer}
 
-    <!-- ESCÁNER DE DIAGNÓSTICO -->
-    <script>
-        function mostrarErrorDiagnostico(mensaje) {
-            function pintarError() {
-                const loading = document.getElementById('loading');
-                if (!loading) return;
-                loading.style.display = 'block';
-                loading.style.color = '#ef4444';
-                loading.style.whiteSpace = 'pre-line';
-                loading.textContent = mensaje;
-            }
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', pintarError, { once: true });
-            } else {
-                pintarError();
-            }
-        }
-        window.addEventListener('error', function(e) {
-            const recurso = (e.target && e.target.src) || e.filename || 'No identificado';
-            mostrarErrorDiagnostico('ERROR DETECTADO:\n' + (e.message || 'Error desconocido') + '\nArchivo: ' + recurso + '\nLínea: ' + (e.lineno || '?'));
-        }, true);
-        window.addEventListener('unhandledrejection', function(e) {
-            const razon = e.reason && e.reason.message ? e.reason.message : String(e.reason);
-            mostrarErrorDiagnostico('ERROR ASÍNCRONO:\n' + razon);
-        });
-    </script>
+/* Portada */
+.hero-bg{position:relative;overflow:hidden}
+.hero-bg::before{content:"";position:absolute;left:-10%;right:-10%;top:-140px;height:440px;pointer-events:none;
+  background:radial-gradient(50% 60% at 25% 45%, rgba(255,91,31,.18), transparent 70%),
+             radial-gradient(35% 45% at 82% 30%, rgba(255,176,32,.08), transparent 70%);
+  animation:brasa 4.5s ease-in-out infinite alternate;will-change:opacity}
+@keyframes brasa{from{opacity:.6}to{opacity:1}}
+.hero{position:relative;padding-top:34px;padding-bottom:34px;text-align:center}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(46px, 15vw, 92px);line-height:.92;letter-spacing:-.01em;margin:0;
+  color:var(--ambar);background:linear-gradient(180deg, var(--oro) 15%, var(--brasa) 95%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 7px rgba(255,197,61,.3)) drop-shadow(0 0 16px rgba(255,197,61,.14))}
+/* Los brillitos del título van fuera del h1 para no recalcular su resplandor en cada cuadro */
+.titulo{position:relative;width:fit-content;max-width:100%;margin:0 auto 16px}
+.lead{font-size:19px;margin:0}
+.lead strong,.precio,.verde{color:var(--verde)}
+/* Brillo del $50: la capa de resplandor solo cambia de opacidad (la procesa la tarjeta gráfica) */
+.lead strong{position:relative;display:inline-block;text-shadow:0 0 2px rgba(37,211,102,.15)}
+.lead strong::after{content:attr(data-glow);position:absolute;left:0;top:0;color:transparent;text-shadow:0 0 10px rgba(37,211,102,.9), 0 0 22px rgba(37,211,102,.45);opacity:0;pointer-events:none;will-change:opacity;animation:pulso .55s ease-in-out infinite alternate}
+@keyframes pulso{from{opacity:0}to{opacity:1}}
 
-    <style>
-        body { background-color: #0b1120; color: #ffffff; font-family: Arial, sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        
-        /* Animaciones */
-        @keyframes parpadeoNeon { 0%, 100% { text-shadow: 0 0 5px #10b981, 0 0 10px #10b981; } 50% { text-shadow: 0 0 15px #10b981, 0 0 25px #10b981; } }
-        @keyframes resplandorDoradoFuerte { 0%, 100% { box-shadow: 0 0 15px rgba(255, 193, 7, 0.4); border-color: #ffc107; } 50% { box-shadow: 0 0 35px rgba(255, 193, 7, 0.8); border-color: #ffeb3b; } }
-        @keyframes latidoRojo { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.6; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes movimientoFuego { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.8; } }
-        @keyframes latidoUrgencia { 0%, 100% { transform: scale(1); text-shadow: none; } 50% { transform: scale(1.1); text-shadow: 0 0 15px #f97316; color: #ffedd5; } }
+/* Boleto con premios */
+.ticket{position:relative;margin:44px 0 26px;padding:38px 20px 22px;background:linear-gradient(180deg,#1C1C20,#141417);border:1px solid var(--borde);border-radius:16px;box-shadow:0 18px 40px -20px rgba(0,0,0,.7)}
+.prizes{list-style:none;margin:0;padding:0;display:grid;gap:16px}
+.prizes li{display:flex;flex-direction:column;align-items:center;gap:4px}
+.big{font-family:var(--display);font-weight:400;color:var(--ceniza);font-size:30px;line-height:1}
+.big.oro{color:#FFB000;text-shadow:0 0 8px rgba(255,176,0,.5), 0 0 18px rgba(255,176,0,.25);display:inline-block;position:relative}
+/* Etiqueta PREMIO sobre el borde del recuadro */
+.premio-tag{position:absolute;top:0;left:50%;z-index:1;transform:translate(-50%, -50%);padding:9px 24px;border-radius:999px;white-space:nowrap;
+  background:linear-gradient(180deg,#1C1C20,#141417);border:1px solid rgba(255,176,0,.55);box-shadow:0 0 10px rgba(255,176,0,.22)}
+.premio-tag::after{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;box-shadow:0 0 18px rgba(255,176,0,.6);opacity:0;will-change:opacity;animation:pulso 1.8s ease-in-out infinite alternate}
+.premio-txt{display:block;font-family:var(--display);font-weight:400;font-size:26px;line-height:1;letter-spacing:.14em;margin-right:-.14em;color:#FFB000;
+  text-shadow:0 0 8px rgba(255,176,0,.5), 0 0 18px rgba(255,176,0,.25)}
+/* Brillitos */
+.chispa{position:absolute;width:var(--s, 10px);height:var(--s, 10px);margin:calc(var(--s, 10px) / -2) 0 0 calc(var(--s, 10px) / -2);pointer-events:none;opacity:0;
+  background:radial-gradient(circle, #FFFFFF 0 30%, #FFF1C2 50%, rgba(255,210,90,0) 78%);
+  clip-path:polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+  animation:chispa 2s ease-in-out infinite;will-change:transform,opacity}
+@keyframes chispa{
+  0%,100%{opacity:0;transform:scale(.2) rotate(0deg)}
+  50%{opacity:1;transform:scale(1) rotate(45deg)}
+}
+.lbl{font-size:18px;font-weight:500;line-height:1.25}
+.fila{display:inline-flex;align-items:center;gap:10px}
+.emo{display:inline-block;font-size:28px;line-height:1;transform-origin:50% 80%;animation:meneo 2.6s ease-in-out infinite}
+.emo2{animation-delay:-1.3s}
+.emo3{animation-delay:-.65s}
+/* La cantidad queda centrada y el emoji cuelga a su izquierda */
+.fila.centrada{position:relative;display:inline-block}
+.fila.centrada .emo{position:absolute;right:100%;top:50%;margin:-14px 10px 0 0}
+@keyframes meneo{
+  0%,100%{transform:rotate(-8deg)}
+  50%{transform:rotate(8deg) translateY(-2px)}
+}
+.perf{position:relative;margin:20px -21px 16px;border-top:2px dashed var(--borde)}
+.perf::before,.perf::after{content:"";position:absolute;top:-12px;width:22px;height:22px;border-radius:50%;background:var(--carbon)}
+.perf::before{left:-11px}
+.perf::after{right:-11px}
+.alt-lbl{margin:0 0 6px;color:var(--humo);font-size:16px}
+.alt{margin:0;font-size:18px;font-weight:600}
+.alt .big{font-size:40px;margin-right:6px}
 
-        .circulo-rojo { display: inline-block; animation: latidoRojo 1.2s infinite; }
-        .fuego-animado { display: inline-block; animation: movimientoFuego 1.2s infinite alternate; margin-right: 5px; }
+/* Medidor */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.stat{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px 10px;border-radius:14px;border:1px solid var(--borde);background:var(--hierro)}
+.stat strong{font-family:var(--display);font-weight:400;font-size:42px;line-height:1}
+.stat span{font-size:15px;font-weight:600;line-height:1.2;color:var(--humo)}
 
-        .header-container { text-align: center; margin-bottom: 20px; width: 100%; max-width: 400px; }
-        .header-title { color: #f59e0b; font-size: 22px; font-weight: 900; margin-bottom: 8px; text-transform: uppercase; }
-        .header-subtitle { font-size: 14px; color: #94a3b8; }
-        .text-green-neon { color: #10b981; font-weight: bold; animation: parpadeoNeon 1.5s infinite alternate; }
+.meter{margin-bottom:18px}
+#freeCount,.restan{color:#FF5533;text-shadow:0 0 8px rgba(255,85,51,.45), 0 0 16px rgba(255,85,51,.2)}
+#freeCount.parpadea,.restan.parpadea{animation:parpadeo var(--vel, 2.4s) ease-in-out infinite alternate;will-change:opacity}
+.restan{display:inline-block}
+@keyframes parpadeo{from{opacity:1}to{opacity:.25}}
+#boletos{padding-top:44px}
+.bar{height:12px;background:var(--hierro2);border:1px solid var(--borde);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg, var(--ambar), var(--brasa));border-radius:99px;transition:width .6s ease}
 
-        .prize-card { background-color: #151c2c; border-radius: 12px; padding: 20px; width: 100%; max-width: 400px; box-sizing: border-box; position: relative; margin-bottom: 20px; border: 2px solid #ffc107; animation: resplandorDoradoFuerte 2s infinite alternate; }
-        .badge-yellow { position: absolute; top: -10px; right: 15px; background-color: #facc15; color: #1e293b; font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-        .prize-title { color: #ffffff; font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 20px; }
-        .prize-item { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; font-size: 15px; font-weight: 500; }
-        .prize-footer { border-top: 1px solid #334155; padding-top: 15px; margin-top: 5px; font-size: 12px; color: #94a3b8; font-style: italic; text-align: center; line-height: 1.5; }
-        .text-yellow-glow { color: #ffc107; font-weight: bold; text-shadow: 0 0 10px rgba(255, 193, 7, 0.8); }
 
-        .action-buttons { display: flex; gap: 10px; width: 100%; max-width: 400px; margin-bottom: 20px; }
-        .btn { flex: 1; padding: 12px; border-radius: 8px; text-align: center; text-decoration: none; color: white; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer; }
-        .btn-wa { background-color: #25d366; }
-        .btn-fb { background-color: #1877f2; }
+/* Botones */
+.ctas{display:grid;gap:10px;margin:0 0 22px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:12px 20px;border-radius:12px;border:2px solid transparent;font:600 17px/1.2 var(--body);text-decoration:none;text-align:center;cursor:pointer}
+.btn svg{flex:none}
+img.brand{display:none;flex:none;width:22px;height:22px}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn.primary{background:var(--brasa);color:var(--carbon)}
+.btn.ghost{background:transparent;color:var(--ceniza);border-color:var(--borde)}
+.btn.gold{background:var(--oro);color:var(--carbon)}
+.btn.danger{background:transparent;color:#FF9A8A;border-color:#6B3A33}
+.btn.wa{background:var(--verde);color:#0E2416}
+.btn.fb{background:var(--fb);color:#FFFFFF}
+.btn.block{width:100%}
+/* Resplandor a ritmo medio en los botones de WhatsApp, Facebook y Compartir de la página */
+.ctas .btn.wa{--glow:37,211,102}
+.ctas .btn.fb,.draw-actions .btn.fb{--glow:22,111,229}
+#shareBtn{--glow:255,91,31}
+.ctas .btn,.draw-actions .btn{position:relative;box-shadow:0 0 4px rgba(var(--glow),.25)}
+.ctas .btn::after,.draw-actions .btn::after{content:"";position:absolute;inset:-2px;border-radius:inherit;pointer-events:none;box-shadow:0 0 4px rgba(var(--glow),.5), 0 0 18px rgba(var(--glow),.7);opacity:0;will-change:opacity;animation:pulso 1.4s ease-in-out infinite alternate}
 
-        .card { background-color: #151c2c; border-radius: 12px; padding: 20px; margin-bottom: 20px; width: 100%; max-width: 400px; box-sizing: border-box; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .info-text { font-size: 13px; color: #94a3b8; line-height: 1.6; }
-        .info-text strong { color: #ffffff; }
-        .text-green { color: #10b981; font-weight: bold; }
-        .meta-title { color: #f97316; font-size: 15px; font-weight: bold; text-align: center; margin-bottom: 10px; }
-        .meta-text { font-size: 13px; color: #94a3b8; text-align: center; line-height: 1.5; }
+/* Secciones */
+section{padding-top:36px}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(28px, 7vw, 40px);line-height:1.05;margin:0 0 8px}
+.muted{color:var(--humo);margin:0 0 16px}
+#boletos > h2,#boletos > .muted{text-align:center}
 
-        .stats-container { display: flex; justify-content: space-between; }
-        .stat-box { width: 50%; text-align: center; }
-        .stat-divider { width: 1px; background-color: #334155; }
-        .stat-label { font-size: 12px; color: #94a3b8; font-weight: bold; letter-spacing: 1px; }
-        .stat-value { font-size: 32px; color: #f97316; font-weight: bold; margin-top: 5px; display: inline-block; }
-        .stat-value.white { color: #ffffff; }
+/* Buscador y filtros */
+.search{display:flex;align-items:center;gap:10px;min-height:52px;padding:0 14px;background:var(--hierro);border:1px solid var(--borde);border-radius:12px;color:var(--humo)}
+.search:focus-within{border-color:var(--ambar)}
+.search input{flex:1;min-width:0;padding:12px 0;background:none;border:0;outline:none;color:var(--ceniza);font:500 17px var(--body)}
+.search input::placeholder{color:var(--humo)}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:12px 0}
+.chip{background:var(--hierro);color:var(--ceniza);border:1px solid var(--borde);border-radius:99px;padding:8px 14px;font:600 15px var(--body);cursor:pointer}
+.chip span{color:var(--humo);font-weight:500;margin-left:4px}
+.chip[aria-pressed="true"]{background:var(--ceniza);border-color:var(--ceniza);color:var(--carbon)}
+.chip[aria-pressed="true"] span{color:#52525B}
+.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin:0 0 12px;font-size:14px;color:var(--humo)}
+.sw{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:6px;vertical-align:-2px}
+.sw-free{background:var(--hierro);border:1px solid var(--borde)}
+.sw-taken{background:linear-gradient(165deg,#D9482B,#B03519)}
+.sw-win{position:relative;background:linear-gradient(165deg,#FFD866,#F2A100);box-shadow:0 0 2px rgba(255,197,61,.4)}
+.sw-win::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:0 0 3px rgba(255,220,120,.9), 0 0 10px rgba(255,197,61,.9);opacity:0;will-change:opacity;animation:pulso 1.6s ease-in-out infinite alternate}
 
-        .search-container { position: relative; width: 100%; max-width: 400px; margin-bottom: 20px; }
-        .search-input { width: 100%; background-color: #1e293b; border: 1px solid #334155; color: #ffffff; padding: 15px 40px 15px 15px; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; }
-        .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
-        
-        #loading { color: #f97316; font-weight: bold; margin-top: 10px; text-align: center; font-size: 14px; }
-        
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; max-width: 400px; margin-top: 20px; }
-        .ticket { background-color: #1e293b; border: 1px solid #334155; color: #ffffff; border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.3s; display: flex; flex-direction: column; justify-content: center; align-items: center; aspect-ratio: 1 / 1; overflow: hidden; padding: 4px; box-sizing: border-box; }
-        .ticket:hover { background-color: #334155; transform: scale(1.05); }
-        .ticket.sold { background: linear-gradient(135deg, #ef4444, #991b1b); border-color: #fca5a5; color: white; box-shadow: 0 0 10px rgba(239, 68, 68, 0.7); transform: scale(1); cursor: pointer; }
-        .ticket-number { font-size: 18px; font-weight: 900; line-height: 1; }
-        .ticket-name { font-size: 11px; font-weight: 700; margin-top: 4px; width: 100%; line-height: 1.1; word-wrap: break-word; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-transform: capitalize; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
+/* Tabla de boletos */
+.grate{contain:layout paint;background:#050506;border:3px solid var(--hierro2);border-radius:14px;padding:8px;box-shadow:inset 0 2px 14px rgba(0,0,0,.6)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(70px, 1fr));gap:6px}
+.cell{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-height:74px;padding:7px 6px 6px 7px;border-radius:8px;border:1px solid var(--borde);background:var(--hierro);color:var(--ceniza);font:inherit;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.cell .n{font:700 16px/1 var(--body);font-variant-numeric:tabular-nums}
+.cell .s{font-size:12px;line-height:1.2;color:var(--humo)}
+.cell .who{font-size:12px;font-weight:600;line-height:1.15;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.cell.free:hover{border-color:var(--ambar)}
+.cell{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;transition:transform .15s}
+.cell.presionando{transform:scale(.93)}
+.cell.sel{background:linear-gradient(165deg,#2BD46A,#18A34B);border-color:#7CF0A6;color:#05230E}
+.cell.sel .s{color:#05230E;font-weight:700}
+.cell .check{position:absolute;top:5px;right:6px;font-size:13px;font-weight:700;line-height:1}
+.selbar{position:fixed;left:0;right:0;bottom:0;z-index:35;margin:0 auto;width:min(100%, 560px);display:grid;gap:8px;padding:14px 16px calc(14px + env(safe-area-inset-bottom, 0px));background:#141417;border-top:3px solid var(--verde);border-radius:18px 18px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.6);animation:sube .2s ease-out}
+.selinfo{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.selinfo strong{font-size:18px}
+.selinfo .total{font-weight:700;color:var(--verde)}
+.selnums{font-size:14px;color:var(--humo);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.selbtns{display:grid;grid-template-columns:auto 1fr;gap:10px;margin-top:4px}
+body.con-seleccion{padding-bottom:180px}
+#selGo{position:relative;box-shadow:0 0 6px rgba(37,211,102,.3)}
+#selGo::after{content:"";position:absolute;inset:-2px;border-radius:inherit;pointer-events:none;box-shadow:0 0 0 4px rgba(37,211,102,.28), 0 0 24px rgba(37,211,102,.85);opacity:0;will-change:opacity;animation:pulso .75s ease-in-out infinite alternate}
+.is-admin .cell.free .s{color:var(--ambar)}
+.cell.taken{background:linear-gradient(165deg,#D9482B 0%,#B03519 100%);border-color:#E8735A;color:#FFFFFF;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.cell.taken .n{color:#FFF1EA}
+.cell.win{background:linear-gradient(165deg,#FFD866,#F2A100);border-color:#FFE49A;color:var(--carbon)}
+.cell .trofeo{position:absolute;top:5px;right:5px;font-size:14px;line-height:1}
+.empty{margin:18px 8px;color:var(--humo);text-align:center}
 
-        .admin-footer { width: 100%; max-width: 400px; text-align: center; margin-top: 30px; padding-bottom: 20px; }
-        .btn-candado { background: none; border: none; font-size: 20px; cursor: pointer; opacity: 0.3; transition: opacity 0.3s; color: #94a3b8; }
-        .btn-candado:hover { opacity: 1; }
+/* Cómo participar */
+.steps ol{list-style:none;counter-reset:paso;margin:14px 0 0;padding:0;display:grid;gap:14px}
+.steps li{counter-increment:paso;display:flex;flex-direction:column;align-items:center;gap:8px}
+.steps li::before{content:counter(paso);display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:transparent;border:2px solid var(--humo);color:var(--ceniza);font-family:var(--display);font-size:20px}
+.steps{text-align:center}
+.steps li::before{animation:brinco 2.4s ease-in-out infinite}
+.steps li:nth-child(2)::before{animation-delay:.35s}
+.steps li:nth-child(3)::before{animation-delay:.7s}
+@keyframes brinco{
+  0%,30%,100%{transform:none}
+  12%{transform:translateY(-6px)}
+}
+.steps-top{padding-top:0;margin-bottom:30px}
 
-        /* Modales */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(11, 17, 32, 0.85); backdrop-filter: blur(5px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-card { background-color: #151c2c; border: 1px solid #f97316; border-radius: 12px; padding: 25px; width: 100%; max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); text-align: center; }
-        .modal-message { color: #fff; font-size: 15px; margin-bottom: 20px; line-height: 1.5; }
-        .modal-message strong { color: #facc15; }
-        .modal-input { width: 100%; margin-bottom: 20px; text-align: center; }
-        .modal-buttons { display: flex; gap: 10px; }
-        .btn-cancel { background-color: #334155; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; flex: 1; font-weight: bold;}
-        .btn-accept { background-color: #f97316; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; flex: 1; font-weight: bold;}
-    </style>
+/* Sorteo */
+.draw{text-align:center;margin-top:40px;padding:26px 20px;border-radius:16px;border:1px solid var(--borde);
+  background:var(--hierro)}
+.draw p{margin:0 0 14px}
+.draw-left{font-weight:600;color:var(--ceniza)}
+.draw-actions{display:flex;flex-direction:column;align-items:center;gap:10px}
+.link-text{overflow-wrap:anywhere;-webkit-user-select:all;user-select:all}
+
+/* Ganador */
+.winner{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:24px;padding:14px 16px;border-radius:14px;background:linear-gradient(135deg,#FFD866,#F2A100);color:var(--carbon)}
+.winner .tro{font-size:34px;line-height:1}
+.winner strong{display:block;font-family:var(--display);font-weight:400;font-size:22px;line-height:1.1}
+.winner span{font-weight:600;overflow-wrap:anywhere}
+
+/* Pie */
+.foot{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px;padding-top:36px;padding-bottom:36px;color:var(--humo);font-size:14px}
+.linkbtn{background:none;border:0;padding:8px 0;color:var(--humo);font:500 14px var(--body);text-decoration:underline;cursor:pointer}
+
+/* Ventana inferior */
+.backdrop{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.72);animation:aparece .2s ease}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;margin:0 auto;width:min(100%, 520px);max-height:88vh;overflow:auto;
+  padding:24px 20px calc(24px + env(safe-area-inset-bottom, 0px));background:#141417;border-top:3px solid var(--brasa);border-radius:20px 20px 0 0;animation:sube .24s ease-out}
+@keyframes sube{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+@keyframes aparece{from{opacity:0}to{opacity:1}}
+.sheet h3{font-family:var(--display);font-weight:400;font-size:30px;line-height:1.1;margin:0 48px 8px 0}
+.sheet p{margin:0 0 14px}
+.x{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:50%;border:1px solid var(--borde);background:transparent;color:var(--ceniza);font-size:18px;cursor:pointer}
+.tag{display:inline-block;margin-bottom:12px;padding:4px 12px;border-radius:99px;font-size:14px;font-weight:600}
+.tag.free{background:var(--hierro2);color:var(--ceniza)}
+.tag.taken{background:#5A1F16;color:#FFB59E}
+.tag.win{background:var(--oro);color:var(--carbon)}
+.name-big{font-size:24px;font-weight:700;line-height:1.2;overflow-wrap:anywhere}
+.field{display:block;margin:4px 0 6px;font-size:15px;color:var(--humo)}
+.input{width:100%;min-height:52px;padding:12px 14px;border-radius:12px;border:1px solid var(--borde);background:var(--hierro);color:var(--ceniza);font:500 17px var(--body)}
+.input:focus{outline:none;border-color:var(--ambar)}
+.err{min-height:1.3em;margin:8px 0 0 !important;color:#FF9A8A;font-size:15px}
+.stack{display:grid;gap:10px;margin-top:10px}
+.hint{margin:14px 0 0 !important;color:var(--humo);font-size:14px}
+
+/* Aviso flotante */
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom, 0px));z-index:60;max-width:calc(100% - 32px);padding:12px 18px;border-radius:12px;background:var(--ceniza);color:var(--carbon);font-weight:600;opacity:0;pointer-events:none;transform:translate(-50%, 16px);transition:opacity .2s, transform .2s}
+.toast.show{opacity:1;transform:translate(-50%, 0)}
+
+@media (min-width:640px){
+  .ctas{grid-template-columns:1fr 1fr}
+  .grid{grid-template-columns:repeat(auto-fill, minmax(84px, 1fr))}
+}
+/* Pausa las animaciones de las zonas que no se están viendo */
+.fuera, .fuera *, .fuera::before, .fuera::after, .fuera *::before, .fuera *::after{animation-play-state:paused !important}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+}
+</style>
 </head>
 <body>
 
-    <div class="header-container">
-        <div class="header-title">GRAN RIFA PARRILLERA</div>
-        <div class="header-subtitle">Valor del boleto: <span class="text-green-neon">$50 MXN</span></div>
+<div class="adminbar" id="adminBar" hidden>
+  <span><strong>Modo administrador</strong>Toca un boleto para anotar, cambiar o liberar.</span>
+  <button type="button" class="btn-sm" id="logoutBtn">Salir</button>
+</div>
+
+<div class="hero-bg">
+  <header class="hero wrap">
+    <div class="winner" id="winnerBanner" hidden>
+      <span class="tro" aria-hidden="true">🏆</span>
+      <div><strong>¡Ya tenemos ganador!</strong><span id="winnerText"></span></div>
     </div>
 
-    <div class="prize-card">
-        <div class="badge-yellow">¡TODO EN UNO!</div>
-        <div class="prize-title">GRAN PREMIO ÚNICO</div>
-        <div class="prize-item"><span>🥩</span> 5 kg de Carne para asar</div>
-        <div class="prize-item"><span>🍻</span> Un 48 de Cerveza</div>
-        <div class="prize-item"><span>💵</span> <span class="text-green-neon">$2,000 MXN en efectivo</span></div>
-        <div class="prize-footer">Opcional: Si el ganador lo prefiere, puede elegir llevarse <span class="text-yellow-glow">$4,000 MXN en efectivo absoluto.</span></div>
+    <div class="titulo"><h1>Gran rifa<br>parrillera</h1></div>
+    <p class="lead">Valor del boleto: <strong data-glow="$50">$50</strong></p>
+
+    <div class="ticket">
+      <div class="premio-tag"><span class="premio-txt">PREMIO</span></div>
+      <ul class="prizes">
+        <li><span class="fila"><span class="emo" aria-hidden="true">🥩</span><span class="big">5 kg</span></span><span class="lbl">de carne para asar</span></li>
+        <li><span class="fila"><span class="emo emo2" aria-hidden="true">🍺</span><span class="big">48</span></span><span class="lbl">cervezas</span></li>
+        <li><span class="fila centrada"><span class="emo emo3" aria-hidden="true">💵</span><span class="big oro">$2,000</span></span><span class="lbl">en efectivo</span></li>
+      </ul>
+      <div class="perf" aria-hidden="true"></div>
+      <p class="alt-lbl">O, si el ganador lo prefiere:</p>
+      <p class="alt"><span class="big oro">$4,000</span>en efectivo</p>
     </div>
 
-    <div class="action-buttons">
-        <a href="#" id="btn-wa-top" class="btn btn-wa" target="_blank"><i class="fab fa-whatsapp"></i> Comprar en WhatsApp</a>
-        <a href="#" id="btn-fb-top" class="btn btn-fb" target="_blank"><i class="fab fa-facebook-f"></i> Página de Facebook</a>
+    <section class="steps steps-top">
+      <h2>Cómo participar</h2>
+      <ol>
+        <li><span><strong>Elige un número libre</strong> en la lista de boletos de abajo.</span></li>
+        <li><span><strong class="verde">Escríbeme por WhatsApp</strong> con el número que quieres. Ahí te digo cómo pagar.</span></li>
+        <li><span><strong>Te anoto</strong> y tu nombre aparece en tu boleto, a la vista de todos.</span></li>
+      </ol>
+    </section>
+
+    <div class="ctas">
+      <a class="btn wa" data-wa>
+        <img class="brand" src="whatsapp.svg" alt="" width="22" height="22"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        Apartar por WhatsApp
+      </a>
+      <a class="btn fb" data-fb>
+        <img class="brand" src="facebook.svg" alt="" width="22" height="22"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Ver mi página de Facebook
+      </a>
     </div>
 
-    <div class="card info-text">
-        <span class="circulo-rojo">🔴</span> El sorteo se realizará <strong>EN VIVO</strong>. Al adquirir tu boleto, serás agregado a nuestro <span class="text-green">grupo exclusivo de WhatsApp</span> donde podrás seguir de cerca el sorteo.
+  </header>
+</div>
+
+<main class="wrap">
+  <section id="boletos">
+    <h2>Elige tu boleto</h2>
+    <p class="muted">Toca un número libre para apartarlo, o mantenlo presionado para elegir varios. Si ya compraste, busca tu nombre.</p>
+
+    <div class="meter">
+      <div class="stats">
+        <div class="stat"><strong id="freeCount">0</strong><span>Boletos disponibles</span></div>
+        <div class="stat stat-taken"><strong id="takenCount">0</strong><span>Boletos ocupados</span></div>
+      </div>
+      <div class="bar" id="bar" role="progressbar" aria-label="Boletos vendidos" aria-valuemin="0" aria-valuemax="200" aria-valuenow="0"><i id="barFill"></i></div>
     </div>
 
-    <div class="card">
-        <div class="meta-title"><span class="fuego-animado">🔥</span> ¡Ayúdanos a llegar a la meta!</div>
-        <div class="meta-text">Entre más rápido se vendan los boletos, más pronto haremos el gran sorteo. ¡Comparte esta página!</div>
+    <label class="search">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="search" type="search" placeholder="Busca tu nombre o número" autocomplete="off" aria-label="Buscar por nombre o número de boleto">
+    </label>
+
+    <div class="chips" role="group" aria-label="Filtrar boletos">
+      <button type="button" class="chip" data-filter="all" aria-pressed="true">Todos<span id="cAll">200</span></button>
+      <button type="button" class="chip" data-filter="free" aria-pressed="false">Libres<span id="cFree"></span></button>
+      <button type="button" class="chip" data-filter="taken" aria-pressed="false">Ocupados<span id="cTaken"></span></button>
     </div>
 
-    <div class="card stats-container">
-        <div class="stat-box">
-            <div class="stat-label">QUEDAN</div>
-            <div class="stat-value" id="quedan">200</div>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-box">
-            <div class="stat-label">OCUPADOS</div>
-            <div class="stat-value white" id="ocupados">0</div>
-        </div>
+    <div class="legend" aria-hidden="true">
+      <span><i class="sw sw-free"></i>Libre</span>
+      <span><i class="sw sw-taken"></i>Ocupado</span>
+      <span><i class="sw sw-win"></i>Ganador</span>
     </div>
 
-    <div class="search-container">
-        <input type="text" id="searchInput" class="search-input" placeholder="Busca tu nombre o número...">
-        <i class="fas fa-search search-icon"></i>
+    <div class="grate">
+      <div class="grid" id="grid"></div>
+      <p class="empty" id="empty" hidden></p>
     </div>
+  </section>
 
-    <div id="loading">Conectando a la Base de Datos...<br><br>⏳</div>
-
-    <div class="grid" id="ticketGrid" style="display: none;"></div>
-
-    <div class="admin-footer">
-        <button id="btnCandado" class="btn-candado" title="Modo Administrador">🔒</button>
+  <section class="draw" id="sorteo">
+    <h2>¿Cuándo es el sorteo?</h2>
+    <p>El sorteo se hace cuando se vendan los 200 boletos, y será en vivo por mi página de Facebook para que todos lo vean.</p>
+    <p class="draw-left" id="drawLeft"></p>
+    <div class="draw-actions">
+    <a class="btn fb" data-fb>
+      <img class="brand" src="facebook.svg" alt="" width="22" height="22"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      Ver mi página de Facebook
+    </a>
+    <button type="button" class="btn primary" id="shareBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="19" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4" stroke="currentColor" stroke-width="2"/></svg>
+      Compartir esta página
+    </button>
     </div>
+  </section>
+</main>
 
-    <div id="customModal" class="modal-overlay">
-        <div class="modal-card">
-            <div id="modalMessage" class="modal-message"></div>
-            <input type="text" id="modalInput" class="search-input modal-input" style="display: none;" autocomplete="off">
-            <div class="modal-buttons">
-                <button id="modalBtnCancel" class="btn-cancel">Cancelar</button>
-                <button id="modalBtnAccept" class="btn-accept">Aceptar</button>
-            </div>
-        </div>
-    </div>
+<footer class="wrap foot">
+  <span>Gran Rifa Parrillera</span>
+  <button type="button" class="linkbtn" id="adminBtn">Acceso de administrador</button>
+</footer>
 
-    <!-- LÓGICA DE JAVASCRIPT: MODO CLÁSICO -->
-    <script>
-        const MI_NUMERO_WHATSAPP = "526451109290"; 
-        const MI_PAGINA_FACEBOOK = "https://www.facebook.com/share/1GesdvKuki/";
+<div class="backdrop" id="backdrop" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+  <button type="button" class="x" id="sheetX" aria-label="Cerrar">✕</button>
+  <div id="sheetBody"></div>
+</div>
+<div class="selbar" id="selBar" hidden>
+  <div class="selinfo"><strong id="selCount"></strong><span class="total" id="selTotal"></span></div>
+  <div class="selnums" id="selNums"></div>
+  <div class="selbtns">
+    <button type="button" class="btn ghost" id="selCancel">Cancelar</button>
+    <a class="btn wa" id="selGo" target="_blank" rel="noopener">Pedir por WhatsApp</a>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-        document.getElementById("btn-wa-top").href = "https://api.whatsapp.com/send?phone=" + MI_NUMERO_WHATSAPP;
-        document.getElementById("btn-fb-top").href = MI_PAGINA_FACEBOOK;
+<script>
+(function(){
+'use strict';
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCpF6Fy6OH13MeNYaVpOHD_olzesq1QqtE",
-            authDomain: "rifas-real-843e5.firebaseapp.com",
-            databaseURL: "https://rifas-real-843e5-default-rtdb.firebaseio.com",
-            projectId: "rifas-real-843e5",
-            storageBucket: "rifas-real-843e5.firebasestorage.app",
-            messagingSenderId: "922361885670",
-            appId: "1:922361885670:web:fb29085d2e498d0f519c27"
-        };
+/* ================= CONFIGURACIÓN =================
+   Aquí se cambian los datos de la rifa. */
+const CONFIG = {
+  nombreRifa: 'Gran Rifa Parrillera',
+  totalBoletos: 200,
+  precio: 50,
+  whatsapp: '526451109290',
+  facebook: 'https://www.facebook.com/share/1DihEwX2vv/',
+  // Dirección final de la página (GitHub Pages). Si se deja vacía, se usa la dirección actual.
+  urlPagina: '',
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        const ticketsRef = db.ref('boletos');
+  /* ===== FIREBASE =====
+     Pega aquí los datos de tu proyecto:
+     Consola de Firebase > Configuración del proyecto > Tus apps > App web > firebaseConfig.
+     Si falta apiKey o databaseURL, la página muestra un aviso de error. */
+  firebase: {
+    apiKey: 'AIzaSyDoC2C_QqYUbJigQpLZQTxJ5H4LMoyULgk',
+    authDomain: 'claude-rifa.firebaseapp.com',
+    databaseURL: 'https://claude-rifa-default-rtdb.firebaseio.com',
+    projectId: 'claude-rifa',
+    appId: '1:529998085667:web:904f607cba2c218c62fb96'
+  },
+  // Correo del usuario administrador que creaste en Firebase Authentication
+  adminEmail: 'venzorjesus4@gmail.com'
+};
+const configCompleta = !!(CONFIG.firebase && CONFIG.firebase.apiKey && CONFIG.firebase.databaseURL);
 
-        const grid = document.getElementById('ticketGrid');
-        const loading = document.getElementById('loading');
-        const searchInput = document.getElementById('searchInput');
-        const spanQuedan = document.getElementById('quedan');
-        const spanOcupados = document.getElementById('ocupados');
+/* ================= DATOS (FIREBASE EN TIEMPO REAL) =================
+   Estructura en la base de datos:
+     rifa/boletos/<número>  ->  "Nombre completo"
+     rifa/ganador           ->  número del boleto ganador */
+const FIREBASE_VERSION = '12.7.0';
+let fbPromesa = null;
+function cargarFirebase(){
+  if (!configCompleta) return Promise.reject(new Error('configuración incompleta'));
+  if (!fbPromesa) {
+    const base = 'https://www.gstatic.com/firebasejs/' + FIREBASE_VERSION + '/';
+    fbPromesa = Promise.all([
+      import(base + 'firebase-app.js'),
+      import(base + 'firebase-database.js'),
+      import(base + 'firebase-auth.js')
+    ]).then(function(m){
+      const app = m[0].initializeApp(CONFIG.firebase);
+      return { dbm: m[1], authm: m[2], db: m[1].getDatabase(app), auth: m[2].getAuth(app) };
+    });
+    fbPromesa.catch(function(){ fbPromesa = null; });
+  }
+  return fbPromesa;
+}
+/* Si una escritura no se confirma en 10 segundos, avisa en lugar de quedarse esperando */
+function conLimite(promesa, ms){
+  return Promise.race([promesa, new Promise(function(_, rechazar){
+    setTimeout(function(){ rechazar(new Error('tiempo agotado')); }, ms);
+  })]);
+}
 
-        let boletosData = {};
-        const TOTAL_BOLETOS = 200;
-        let esAdmin = false; 
+function crearStoreFirebase(){
+  return {
+    escuchar: function(fn, alError){
+      cargarFirebase().then(function(f){
+        f.dbm.onValue(f.dbm.ref(f.db, 'rifa'), function(snap){
+          const v = snap.val() || {};
+          const crudo = v.boletos || {};
+          const boletos = {};
+          Object.keys(crudo).forEach(function(k){ if (crudo[k]) boletos[k] = String(crudo[k]); });
+          fn({ boletos: boletos, ganador: v.ganador == null ? null : Number(v.ganador) });
+        }, function(err){ if (alError) alError('lectura', err); });
 
-        function licuadoraMatematica(pin) {
-            let resultado = "";
-            for (let i = 0; i < pin.length; i++) {
-                resultado += (pin.charCodeAt(i) * 2).toString(16);
-            }
-            return resultado;
-        }
-        const PIN_ENCRIPTADO = "6066626264606064";
-
-        function mostrarModal(tipo, mensaje) {
-            return new Promise(function(resolve) {
-                const overlay = document.getElementById('customModal');
-                const msgEl = document.getElementById('modalMessage');
-                const inputEl = document.getElementById('modalInput');
-                const btnCancel = document.getElementById('modalBtnCancel');
-                const btnAccept = document.getElementById('modalBtnAccept');
-
-                msgEl.innerHTML = mensaje;
-                inputEl.value = '';
-
-                if (tipo === 'alerta') {
-                    inputEl.style.display = 'none';
-                    btnCancel.style.display = 'none';
-                    btnAccept.textContent = 'OK';
-                } else if (tipo === 'confirmacion') {
-                    inputEl.style.display = 'none';
-                    btnCancel.style.display = 'block';
-                    btnCancel.textContent = 'Cancelar';
-                    btnAccept.textContent = 'Aceptar';
-                } else if (tipo === 'formulario') {
-                    inputEl.style.display = 'block';
-                    btnCancel.style.display = 'block';
-                    btnCancel.textContent = 'Cancelar';
-                    btnAccept.textContent = 'Guardar';
-                    setTimeout(function() { inputEl.focus(); }, 100);
-                }
-
-                overlay.style.display = 'flex';
-
-                const limpiar = function() {
-                    overlay.style.display = 'none';
-                    btnCancel.onclick = null;
-                    btnAccept.onclick = null;
-                };
-
-                btnCancel.onclick = function() { limpiar(); resolve(null); };
-                btnAccept.onclick = function() { 
-                    limpiar(); 
-                    if (tipo === 'formulario') { resolve(inputEl.value); }
-                    else { resolve(true); }
-                };
-            });
-        }
-
-        document.getElementById('btnCandado').addEventListener('click', function() {
-            if (esAdmin) {
-                mostrarModal('alerta', "Ya estás en Modo Administrador 🔓");
-                return;
-            }
-            mostrarModal('formulario', "🔒 <strong>Área de Administrador</strong><br><br>Ingresa tu PIN de seguridad:").then(function(pinIngresado) {
-                if (pinIngresado && licuadoraMatematica(pinIngresado) === PIN_ENCRIPTADO) {
-                    esAdmin = true;
-                    const btn = document.getElementById('btnCandado');
-                    btn.textContent = "🔓 Modo Administrador Activo";
-                    btn.style.color = "#10b981";
-                    btn.style.opacity = "1";
-                    btn.style.fontSize = "14px";
-                    mostrarModal('alerta', "✅ Modo Administrador activado.<br><br>Ahora puedes registrar nombres o <strong>tocar un boleto rojo para liberarlo</strong>.");
-                } else if (pinIngresado) {
-                    mostrarModal('alerta', "❌ PIN incorrecto.");
-                }
-            });
+        /* Avisa si se pierde o se recupera la conexión */
+        let estadoConexion = 'inicio';
+        f.dbm.onValue(f.dbm.ref(f.db, '.info/connected'), function(s){
+          if (s.val() === true) {
+            if (estadoConexion === 'perdida') aviso('Conexión recuperada');
+            estadoConexion = 'conectado';
+          } else if (estadoConexion === 'conectado') {
+            estadoConexion = 'perdida';
+            aviso('Sin conexión. Reintentando…');
+          }
         });
+      }).catch(function(err){ if (alError) alError('carga', err); });
+    },
+    anotar: async function(n, nombre){
+      const f = await cargarFirebase();
+      await conLimite(f.dbm.set(f.dbm.ref(f.db, 'rifa/boletos/' + n), nombre), 10000);
+    },
+    liberar: async function(n){
+      const f = await cargarFirebase();
+      const cambios = {};
+      cambios['boletos/' + n] = null;
+      if (Number(estado.ganador) === n) cambios.ganador = null;
+      await conLimite(f.dbm.update(f.dbm.ref(f.db, 'rifa'), cambios), 10000);
+    },
+    marcarGanador: async function(n){
+      const f = await cargarFirebase();
+      await conLimite(f.dbm.set(f.dbm.ref(f.db, 'rifa/ganador'), n), 10000);
+    }
+  };
+}
 
-        ticketsRef.on('value', function(snapshot) {
-            loading.style.display = 'none';
-            grid.style.display = 'grid';
-            boletosData = snapshot.val() || {};
-            renderTickets("");
-        }, function(error) {
-            loading.style.color = '#ef4444';
-            loading.innerHTML = "❌ ERROR DE CONEXIÓN FIREBASE:<br><br>" + error.message;
-        });
+function crearAuthFirebase(){
+  let usuario = null;
+  const subs = new Set();
+  cargarFirebase().then(function(f){
+    f.authm.onAuthStateChanged(f.auth, function(u){
+      usuario = u;
+      subs.forEach(function(fn){ fn(!!u); });
+    });
+  }).catch(function(){});
+  return {
+    get esAdmin(){
+      return !!(usuario && usuario.email && CONFIG.adminEmail &&
+        usuario.email.toLowerCase() === CONFIG.adminEmail.trim().toLowerCase());
+    },
+    alCambiar: function(fn){ subs.add(fn); },
+    entrar: async function(pass){
+      if (!CONFIG.adminEmail) { const e = new Error('falta correo'); e.code = 'falta-correo'; throw e; }
+      const f = await cargarFirebase();
+      await f.authm.signInWithEmailAndPassword(f.auth, CONFIG.adminEmail.trim(), pass);
+    },
+    salir: async function(){
+      const f = await cargarFirebase();
+      await f.authm.signOut(f.auth);
+    }
+  };
+}
 
-        function renderTickets(filterText) {
-            if (!filterText) filterText = "";
-            grid.innerHTML = '';
-            let ocupados = 0;
+const Store = crearStoreFirebase();
+const Auth = crearAuthFirebase();
 
-            for (let i = 1; i <= TOTAL_BOLETOS; i++) {
-                const numStr = i.toString().padStart(3, '0');
-                const boleto = boletosData[i];
-                const isSold = boleto && boleto.vendido;
-                const ownerName = isSold ? boleto.nombre : "";
+/* ================= INTERFAZ ================= */
+const TOTAL = CONFIG.totalBoletos;
+const $ = function(s){ return document.querySelector(s); };
+const grid = $('#grid'), empty = $('#empty'), search = $('#search');
+const sheet = $('#sheet'), sheetBody = $('#sheetBody'), backdrop = $('#backdrop');
+const toastEl = $('#toast');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-                if (isSold) ocupados++;
+let estado = { boletos: {}, ganador: null };
+let cargado = false;
+let errorConexion = false;
+let filtro = 'all';
+const seleccion = new Set();
 
-                if (filterText && !numStr.includes(filterText) && !ownerName.toLowerCase().includes(filterText.toLowerCase())) {
-                    continue;
-                }
+const ICONO_WA = '<img class="brand" src="whatsapp.svg" alt="" width="22" height="22"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>';
 
-                const div = document.createElement('div');
-                div.onclick = function() { procesarBoleto(i, isSold, ownerName); };
+const ICONO_FB = '<img class="brand" src="facebook.svg" alt="" width="22" height="22"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 
-                if (!isSold) {
-                    div.className = 'ticket';
-                    div.innerHTML = '<div class="ticket-number">' + numStr + '</div>';
-                } else {
-                    div.className = 'ticket sold';
-                    div.innerHTML = '<div class="ticket-number">' + numStr + '</div><div class="ticket-name">' + ownerName + '</div>';
-                }
+function esc(s){
+  return String(s).replace(/[&<>"']/g, function(c){
+    return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+  });
+}
+function normalizar(s){
+  return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+}
+function limpiarNombre(s){ return String(s).replace(/\s+/g, ' ').trim(); }
+function waLink(texto){ return 'https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent(texto); }
+function msgGeneral(){ return 'Hola, vi la ' + CONFIG.nombreRifa + ' y quiero apartar un boleto.'; }
+function msgBoleto(n){ return 'Hola, quiero apartar el boleto #' + n + ' de la ' + CONFIG.nombreRifa + ' ($' + CONFIG.precio + ').'; }
+function ganadorActual(){ const g = Number(estado.ganador); return g && estado.boletos[g] ? g : null; }
 
-                grid.appendChild(div);
-            }
+let toastTimer;
+function aviso(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 2600);
+}
 
-            let quedan = TOTAL_BOLETOS - ocupados;
-            spanOcupados.textContent = ocupados;
-            spanQuedan.textContent = quedan;
-            
-            let velocidad = Math.max(0.3, (quedan / TOTAL_BOLETOS) * 3);
-            spanQuedan.style.animation = "latidoUrgencia " + velocidad + "s infinite alternate";
-        }
+/* Mensajes si la base de datos no responde */
+function mostrarErrorConexion(tipo, err){
+  if (cargado && tipo === 'lenta') return;
+  if (err) console.error('Firebase (' + tipo + '):', err);
+  const mensajes = {
+    carga: 'No se pudo conectar con la base de datos. Revisa tu internet y recarga la página.',
+    lectura: 'No se pudo leer la lista de boletos. Recarga la página en un momento.',
+    lenta: 'La conexión está tardando más de lo normal. Si no aparecen los boletos, recarga la página.',
+    config: 'La página no está configurada correctamente. Si eres el administrador, revisa los datos de Firebase.'
+  };
+  const texto = mensajes[tipo] || mensajes.carga;
+  if (!cargado) { errorConexion = true; empty.hidden = false; empty.textContent = texto; }
+  else aviso(texto);
+}
 
-        searchInput.addEventListener('input', function(e) {
-            renderTickets(e.target.value);
-        });
+/* ---------- Pintar la página ---------- */
+function render(){
+  /* Mientras llega la información de la base de datos */
+  if (!cargado) {
+    $('#freeCount').textContent = '…';
+    $('#takenCount').textContent = '…';
+    $('#cFree').textContent = '';
+    $('#cTaken').textContent = '';
+    $('#drawLeft').textContent = 'Cargando boletos…';
+    grid.innerHTML = '';
+    empty.hidden = false;
+    if (!errorConexion) empty.textContent = 'Cargando boletos…';
+    $('#adminBar').hidden = !Auth.esAdmin;
+    document.body.classList.toggle('is-admin', Auth.esAdmin);
+    return;
+  }
+  let ocupados = 0;
+  for (let n = 1; n <= TOTAL; n++) if (estado.boletos[n]) ocupados++;
+  const libres = TOTAL - ocupados;
 
-        function procesarBoleto(numero, isSold, ownerName) {
-            const numFormateado = numero.toString().padStart(3, '0');
-            
-            if (esAdmin) {
-                if (isSold) {
-                    mostrarModal('confirmacion', "El boleto <strong>" + numFormateado + "</strong> está apartado por <strong>" + ownerName + "</strong>.<br><br>¿Deseas LIBERAR este número?").then(function(liberar) {
-                        if (liberar) {
-                            db.ref('boletos/' + numero).remove();
-                        }
-                    });
-                } else {
-                    mostrarModal('formulario', "Vas a registrar el boleto <strong>" + numFormateado + "</strong>.<br><br>Ingresa el nombre del participante:").then(function(nombre) {
-                        if (nombre && nombre.trim() !== "") {
-                            db.ref('boletos/' + numero).set({
-                                vendido: true,
-                                nombre: nombre.trim()
-                            });
-                        }
-                        
+  $('#freeCount').textContent = libres;
+  /* Parpadeo: lento con muchos boletos libres, más rápido conforme se acaban */
+  const fc = $('#freeCount');
+  fc.style.setProperty('--vel', (0.45 + 1.95 * libres / TOTAL).toFixed(2) + 's');
+  fc.classList.toggle('parpadea', libres > 0);
+  $('#takenCount').textContent = ocupados;
+  $('#barFill').style.width = (ocupados / TOTAL * 100) + '%';
+  $('#bar').setAttribute('aria-valuenow', ocupados);
+
+  $('#cAll').textContent = TOTAL;
+  $('#cFree').textContent = libres;
+  $('#cTaken').textContent = ocupados;
+
+  const vel = (0.45 + 1.95 * libres / TOTAL).toFixed(2) + 's';
+  $('#drawLeft').innerHTML = libres === 0
+    ? 'Ya se vendieron todos los boletos. Sigue mi página para ver el sorteo en vivo.'
+    : (libres === 1 ? 'Falta' : 'Faltan') + ' <span class="restan parpadea" style="--vel:' + vel + '">' + libres + '</span> '
+      + (libres === 1 ? 'boleto' : 'boletos') + ' para el sorteo.';
+
+  const g = ganadorActual();
+  $('#winnerBanner').hidden = !g;
+  if (g) $('#winnerText').textContent = 'Boleto #' + g + ': ' + estado.boletos[g];
+
+  $('#adminBar').hidden = !Auth.esAdmin;
+  document.body.classList.toggle('is-admin', Auth.esAdmin);
+
+  /* Quita de la selección los boletos que ya se ocuparon */
+  seleccion.forEach(function(n){ if (estado.boletos[n]) seleccion.delete(n); });
+  if (Auth.esAdmin) seleccion.clear();
+  renderSeleccion();
+
+  renderGrid();
+}
+
+function renderGrid(){
+  if (!cargado) return;
+  const q = normalizar(search.value).replace(/^#/, '');
+  const g = ganadorActual();
+  let html = '', visibles = 0;
+
+  for (let n = 1; n <= TOTAL; n++) {
+    const nombre = estado.boletos[n];
+    const ocupado = !!nombre;
+    if (filtro === 'free' && ocupado) continue;
+    if (filtro === 'taken' && !ocupado) continue;
+    if (q) {
+      const porNumero = /^\d+$/.test(q) && String(n) === q;
+      const porNombre = ocupado && normalizar(nombre).indexOf(q) !== -1;
+      if (!porNumero && !porNombre) continue;
+    }
+    visibles++;
+    const gana = g === n;
+    const elegido = !ocupado && seleccion.has(n);
+    const clase = gana ? 'win' : (ocupado ? 'taken' : (elegido ? 'free sel' : 'free'));
+    const etiqueta = gana ? 'Boleto ' + n + ', ganador: ' + nombre
+      : ocupado ? 'Boleto ' + n + ', ocupado por ' + nombre
+      : 'Boleto ' + n + (elegido ? ', elegido' : ', libre');
+    html += '<button type="button" class="cell ' + clase + '" data-n="' + n + '" aria-label="' + esc(etiqueta) + '">'
+      + '<span class="n">' + n + '</span>'
+      + (ocupado ? '<span class="who">' + esc(nombre) + '</span>'
+                 : '<span class="s">' + (Auth.esAdmin ? 'Anotar' : (elegido ? 'Elegido' : 'Libre')) + '</span>')
+      + (gana ? '<span class="trofeo" aria-hidden="true">🏆</span>' : '')
+      + (elegido ? '<span class="check" aria-hidden="true">✓</span>' : '')
+      + '</button>';
+  }
+
+  grid.innerHTML = html;
+  empty.hidden = visibles > 0;
+  if (!visibles) {
+    empty.textContent = q
+      ? 'No encontré ese nombre o número. Revisa cómo lo escribiste o escríbeme por WhatsApp.'
+      : (filtro === 'free' ? 'Ya no quedan boletos libres.' : 'Todavía no hay boletos ocupados.');
+  }
+}
+
+/* ---------- Elegir varios boletos ---------- */
+function msgVarios(nums){
+  if (nums.length === 1) return msgBoleto(nums[0]);
+  const lista = nums.map(function(n){ return '#' + n; }).join(', ');
+  const total = (nums.length * CONFIG.precio).toLocaleString('es-MX');
+  return 'Hola, quiero apartar ' + nums.length + ' boletos de la ' + CONFIG.nombreRifa + ': ' + lista + ' (total $' + total + ').';
+}
+function renderSeleccion(){
+  const nums = Array.from(seleccion).sort(function(a, b){ return a - b; });
+  $('#selBar').hidden = nums.length === 0;
+  document.body.classList.toggle('con-seleccion', nums.length > 0);
+  if (!nums.length) return;
+  $('#selCount').textContent = nums.length === 1 ? '1 boleto elegido' : nums.length + ' boletos elegidos';
+  $('#selTotal').textContent = 'Total: $' + (nums.length * CONFIG.precio).toLocaleString('es-MX');
+  $('#selNums').textContent = nums.map(function(n){ return '#' + n; }).join(', ');
+  $('#selGo').href = waLink(msgVarios(nums));
+}
+function alternarSeleccion(n){
+  if (seleccion.has(n)) seleccion.delete(n); else seleccion.add(n);
+  renderGrid(); renderSeleccion();
+}
+function limpiarSeleccion(){
+  seleccion.clear();
+  renderGrid(); renderSeleccion();
+}
+
+/* Mantener presionado un número libre para empezar a elegir varios */
+let presion = null;
+let ignorarClick = false;
+grid.addEventListener('pointerdown', function(e){
+  ignorarClick = false;
+  if (Auth.esAdmin) return;
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  const c = e.target.closest('.cell.free');
+  if (!c) return;
+  const n = Number(c.dataset.n);
+  c.classList.add('presionando');
+  presion = {
+    x: e.clientX, y: e.clientY, celda: c,
+    timer: setTimeout(function(){
+      c.classList.remove('presionando');
+      presion = null;
+      ignorarClick = true;
+      if (navigator.vibrate) { try { navigator.vibrate(30); } catch (err) {} }
+      const primera = seleccion.size === 0;
+      seleccion.add(n);
+      renderGrid(); renderSeleccion();
+      if (primera) aviso('Toca más números libres para agregarlos');
+    }, 450)
+  };
+});
+function cancelarPresion(){
+  if (!presion) return;
+  clearTimeout(presion.timer);
+  presion.celda.classList.remove('presionando');
+  presion = null;
+}
+grid.addEventListener('pointermove', function(e){
+  if (presion && (Math.abs(e.clientX - presion.x) > 10 || Math.abs(e.clientY - presion.y) > 10)) cancelarPresion();
+});
+['pointerup', 'pointercancel', 'pointerleave'].forEach(function(ev){ grid.addEventListener(ev, cancelarPresion); });
+grid.addEventListener('contextmenu', function(e){ if (e.target.closest('.cell')) e.preventDefault(); });
+
+/* ---------- Ventana inferior ---------- */
+/* Usa los íconos oficiales (whatsapp.svg y facebook.svg) si están junto a la página; si no, deja los genéricos */
+function activarIconos(raiz){
+  raiz.querySelectorAll('img.brand').forEach(function(img){
+    const usar = function(){
+      img.style.display = 'block';
+      const g = img.nextElementSibling;
+      if (g && g.tagName.toLowerCase() === 'svg') g.remove();
+    };
+    const quitar = function(){ img.remove(); };
+    if (img.complete) { if (img.naturalWidth) usar(); else quitar(); }
+    else { img.addEventListener('load', usar); img.addEventListener('error', quitar); }
+  });
+}
+
+let ultimoFoco = null;
+function abrirSheet(html, enfocar){
+  ultimoFoco = document.activeElement;
+  sheetBody.innerHTML = html;
+  activarIconos(sheetBody);
+  sheet.hidden = false;
+  backdrop.hidden = false;
+  document.documentElement.style.overflow = 'hidden';
+  const el = enfocar ? sheetBody.querySelector(enfocar) : null;
+  (el || $('#sheetX')).focus();
+}
+function cerrarSheet(){
+  if (sheet.hidden) return;
+  sheet.hidden = true;
+  backdrop.hidden = true;
+  document.documentElement.style.overflow = '';
+  if (ultimoFoco && document.contains(ultimoFoco)) ultimoFoco.focus();
+}
+
+function abrirBoleto(n){
+  if (Auth.esAdmin) return abrirEditor(n);
+  const nombre = estado.boletos[n];
+  const gana = ganadorActual() === n;
+  if (nombre) {
+    abrirSheet(
+      '<h3 id="sheetTitle">Boleto #' + n + '</h3>'
+      + '<span class="tag ' + (gana ? 'win' : 'taken') + '">' + (gana ? 'Boleto ganador 🏆' : 'Ocupado') + '</span>'
+      + '<p class="name-big">' + esc(nombre) + '</p>'
+      + '<p class="muted">' + (gana ? '¡Felicidades! Este boleto ganó la rifa.' : 'Este boleto ya tiene dueño. Si es tuyo, ¡mucha suerte en el sorteo!') + '</p>'
+      + '<button type="button" class="btn ghost block" data-act="cerrar">Cerrar</button>'
+    );
+  } else {
+    abrirSheet(
+      '<h3 id="sheetTitle">Boleto #' + n + '</h3>'
+      + '<span class="tag free">Disponible</span>'
+      + '<p>Valor del boleto: <strong class="precio">$' + CONFIG.precio + '</strong>. Mándame un WhatsApp con este número para apartarlo. En cuanto te anote, tu nombre aparece aquí.</p>'
+      + '<a class="btn wa block" href="' + waLink(msgBoleto(n)) + '" target="_blank" rel="noopener">' + ICONO_WA + 'Quiero el boleto #' + n + '</a>',
+      '.btn.wa'
+    );
+  }
+}
+
+function abrirEditor(n){
+  const nombre = estado.boletos[n] || '';
+  const gana = ganadorActual() === n;
+  abrirSheet(
+    '<h3 id="sheetTitle">Boleto #' + n + '</h3>'
+    + '<span class="tag ' + (gana ? 'win' : nombre ? 'taken' : 'free') + '">' + (gana ? 'Ganador' : nombre ? 'Ocupado' : 'Libre') + '</span>'
+    + '<label class="field" for="nameInput">Nombre completo de la persona</label>'
+    + '<input class="input" id="nameInput" type="text" maxlength="60" autocomplete="off" autocapitalize="words" placeholder="Ej. Juan Pérez López" value="' + esc(nombre) + '">'
+    + '<p class="err" id="editErr" role="alert"></p>'
+    + '<div class="stack">'
+    +   '<button type="button" class="btn primary block" data-act="guardar" data-n="' + n + '">' + (nombre ? 'Guardar cambios' : 'Anotar en el boleto') + '</button>'
+    +   (nombre && !gana ? '<button type="button" class="btn gold block" data-act="ganador" data-n="' + n + '">🏆 Marcar como ganador</button>' : '')
+    +   (gana ? '<button type="button" class="btn ghost block" data-act="quitarGanador" data-n="' + n + '">Quitar marca de ganador</button>' : '')
+    +   (nombre ? '<button type="button" class="btn danger block" data-act="liberar" data-n="' + n + '">Liberar boleto</button>' : '')
+    + '</div>',
+    '#nameInput'
+  );
+}
+
+function abrirLogin(){
+  abrirSheet(
+    '<h3 id="sheetTitle">Acceso de administrador</h3>'
+    + '<p class="muted">Escribe tu contraseña para anotar nombres, liberar boletos y marcar al ganador.</p>'
+    + '<label class="field" for="passInput">Contraseña</label>'
+    + '<input class="input" id="passInput" type="password" autocomplete="current-password">'
+    + '<p class="err" id="loginErr" role="alert"></p>'
+    + '<button type="button" class="btn primary block" data-act="entrar">Entrar</button>',
+    '#passInput'
+  );
+}
+
+/* ---------- Compartir la página ---------- */
+function urlPagina(){ return CONFIG.urlPagina || (location.origin + location.pathname); }
+function textoCompartir(){
+  return '¡Participa en la ' + CONFIG.nombreRifa + '! 5 kg de carne para asar, 48 cervezas y $2,000 en efectivo. Valor del boleto: $' + CONFIG.precio + '.';
+}
+async function compartir(){
+  const url = urlPagina();
+  if (navigator.share) {
+    try { await navigator.share({ title: CONFIG.nombreRifa, text: textoCompartir(), url: url }); return; }
+    catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  abrirCompartir(url);
+}
+function abrirCompartir(url){
+  abrirSheet(
+    '<h3 id="sheetTitle">Compartir la página</h3>'
+    + '<p class="muted">Envíala a tus amigos o publícala en tus redes.</p>'
+    + '<div class="stack">'
+    +   '<a class="btn wa block" href="https://wa.me/?text=' + encodeURIComponent(textoCompartir() + ' ' + url) + '" target="_blank" rel="noopener">' + ICONO_WA + 'Compartir por WhatsApp</a>'
+    +   '<a class="btn fb block" href="https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url) + '" target="_blank" rel="noopener">' + ICONO_FB + 'Compartir en Facebook</a>'
+    +   '<button type="button" class="btn ghost block" data-act="copiar" data-url="' + esc(url) + '">Copiar enlace</button>'
+    + '</div>'
+    + '<p class="hint link-text">' + esc(url) + '</p>',
+    '.btn.wa'
+  );
+}
+async function copiarEnlace(btn){
+  const url = btn.dataset.url;
+  let ok = false;
+  try { await navigator.clipboard.writeText(url); ok = true; }
+  catch (e) {
+    try {
+      const t = document.createElement('textarea');
+      t.value = url; t.setAttribute('readonly', '');
+      t.style.position = 'fixed'; t.style.opacity = '0';
+      document.body.appendChild(t); t.select();
+      ok = document.execCommand('copy');
+      t.remove();
+    } catch (e2) { ok = false; }
+  }
+  if (ok) { btn.textContent = 'Enlace copiado'; aviso('Enlace copiado'); }
+  else aviso('Mantén presionado el enlace de abajo para copiarlo');
+}
+
+/* Pide un segundo toque antes de acciones delicadas */
+function pideConfirmar(btn, texto){
+  if (btn.dataset.ok === '1') return false;
+  btn.dataset.ok = '1';
+  btn.textContent = texto;
+  return true;
+}
+
+async function ejecutar(btn, accion, mensajeOk, errSel){
+  const original = btn.innerHTML;
+  btn.disabled = true;
+  btn.textContent = 'Guardando…';
+  try {
+    await accion();
+    cerrarSheet();
+    aviso(mensajeOk);
+    return true;
+  } catch (e) {
+    const err = sheetBody.querySelector(errSel || '#editErr');
+    if (err) err.textContent = 'No se pudo guardar. Revisa tu conexión e inténtalo de nuevo.';
+    btn.disabled = false;
+    btn.innerHTML = original;
+    return false;
+  }
+}
+
+sheetBody.addEventListener('click', async function(e){
+  const btn = e.target.closest('[data-act]');
+  if (!btn) return;
+  const act = btn.dataset.act;
+  const n = Number(btn.dataset.n);
+
+  if (act === 'cerrar') return cerrarSheet();
+  if (act === 'copiar') return copiarEnlace(btn);
+
+  if (act === 'entrar') {
+    const pass = $('#passInput').value;
+    const err = $('#loginErr');
+    if (pass.length < 8) { err.textContent = 'La contraseña tiene al menos 8 caracteres.'; return; }
+    btn.disabled = true; btn.textContent = 'Entrando…';
+    try {
+      await Auth.entrar(pass);
+      cerrarSheet();
+      aviso('Modo administrador activado');
+    } catch (ex) {
+      const c = (ex && ex.code) || '';
+      const mensajes = {
+        'auth/too-many-requests': 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.',
+        'auth/network-request-failed': 'Sin conexión. Revisa tu internet.',
+        'auth/operation-not-allowed': 'Falta activar Correo/contraseña en Firebase Authentication.',
+        'falta-correo': 'Falta poner el correo de administrador en la configuración.'
+      };
+      err.textContent = mensajes[c] || (c ? 'Contraseña incorrecta.' : 'No se pudo conectar. Inténtalo de nuevo.');
+      btn.disabled = false; btn.textContent = 'Entrar';
+    }
+    return;
+  }
+
+  if (!Auth.esAdmin) return;
+
+  if (act === 'guardar') {
+    const nombre = limpiarNombre($('#nameInput').value);
+    if (nombre.length < 2) { $('#editErr').textContent = 'Escribe el nombre para anotarlo.'; return; }
+    await ejecutar(btn, function(){ return Store.anotar(n, nombre); }, 'Boleto #' + n + ' anotado a ' + nombre);
+  }
+
+  if (act === 'liberar') {
+    if (pideConfirmar(btn, 'Toca otra vez para liberar el #' + n)) return;
+    await ejecutar(btn, function(){ return Store.liberar(n); }, 'Boleto #' + n + ' liberado');
+  }
+
+  if (act === 'ganador') {
+    const g = ganadorActual();
+    if (g && g !== n && pideConfirmar(btn, 'Ya está marcado el #' + g + '. Toca otra vez para cambiarlo')) return;
+    const ok = await ejecutar(btn, function(){ return Store.marcarGanador(n); }, 'Boleto #' + n + ' marcado como ganador');
+    if (ok) window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  }
+
+  if (act === 'quitarGanador') {
+    await ejecutar(btn, function(){ return Store.marcarGanador(null); }, 'Se quitó la marca de ganador');
+  }
+});
+
+sheetBody.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' && e.target.matches('input')) {
+    e.preventDefault();
+    const principal = sheetBody.querySelector('[data-act="guardar"], [data-act="entrar"]');
+    if (principal) principal.click();
+  }
+});
+
+/* ---------- Eventos de la página ---------- */
+grid.addEventListener('click', function(e){
+  const c = e.target.closest('.cell');
+  if (!c) return;
+  if (ignorarClick) { ignorarClick = false; return; }
+  const n = Number(c.dataset.n);
+  if (!Auth.esAdmin && seleccion.size > 0) {
+    if (estado.boletos[n]) aviso('El boleto #' + n + ' ya está ocupado');
+    else alternarSeleccion(n);
+    return;
+  }
+  abrirBoleto(n);
+});
+let busquedaTimer;
+search.addEventListener('input', function(){
+  clearTimeout(busquedaTimer);
+  busquedaTimer = setTimeout(renderGrid, 120);
+});
+document.querySelectorAll('.chip').forEach(function(chip){
+  chip.addEventListener('click', function(){
+    filtro = chip.dataset.filter;
+    document.querySelectorAll('.chip').forEach(function(c){ c.setAttribute('aria-pressed', String(c === chip)); });
+    renderGrid();
+  });
+});
+$('#sheetX').addEventListener('click', cerrarSheet);
+backdrop.addEventListener('click', cerrarSheet);
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'Escape') return;
+  if (!sheet.hidden) cerrarSheet();
+  else if (seleccion.size) limpiarSeleccion();
+});
+
+$('#adminBtn').addEventListener('click', function(){
+  if (Auth.esAdmin) aviso('Ya estás en modo administrador');
+  else abrirLogin();
+});
+$('#logoutBtn').addEventListener('click', async function(){
+  await Auth.salir();
+  aviso('Saliste del modo administrador');
+});
+
+/* En celulares, abre la app de WhatsApp directo en lugar de la página web de WhatsApp */
+const esMovil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+document.addEventListener('click', function(e){
+  const a = e.target.closest('a[href^="https://wa.me/"]');
+  if (!a || !esMovil || a.dataset.directo) return;
+  e.preventDefault();
+  const u = new URL(a.href);
+  const tel = u.pathname.replace(/\//g, '');
+  const texto = u.searchParams.get('text') || '';
+  const app = 'whatsapp://send?' + (tel ? 'phone=' + tel + '&' : '') + 'text=' + encodeURIComponent(texto);
+  let salio = false;
+  const alSalir = function(){ if (document.hidden) salio = true; };
+  document.addEventListener('visibilitychange', alSalir);
+  try { window.location.href = app; } catch (err) {}
+  setTimeout(function(){
+    document.removeEventListener('visibilitychange', alSalir);
+    if (salio || document.hidden) return;
+    /* Si la app no se abrió, ofrece el enlace normal dentro del estilo de la página */
+    abrirSheet(
+      '<h3 id="sheetTitle">Abrir WhatsApp</h3>'
+      + '<p class="muted">Si WhatsApp no se abrió solo, toca el botón.</p>'
+      + '<a class="btn wa block" data-directo="1" href="' + esc(a.href) + '" target="_blank" rel="noopener">' + ICONO_WA + 'Abrir WhatsApp</a>',
+      '.btn.wa'
+    );
+  }, 1500);
+});
+
+$('#selCancel').addEventListener('click', limpiarSeleccion);
+activarIconos(document);
+$('#shareBtn').addEventListener('click', compartir);
+document.querySelectorAll('[data-wa]').forEach(function(a){
+  a.href = waLink(msgGeneral()); a.target = '_blank'; a.rel = 'noopener';
+});
+document.querySelectorAll('[data-fb]').forEach(function(a){
+  a.href = CONFIG.facebook; a.target = '_blank'; a.rel = 'noopener';
+});
+
+/* Brillitos en el título y en los premios en efectivo; cambian de lugar en cada destello */
+function ponerBrillitos(el, cantidad, minimo, maximo){
+  const azar = function(){ return (Math.random() * 100).toFixed(1) + '%'; };
+  for (let i = 0; i < cantidad; i++) {
+    const s = document.createElement('span');
+    s.className = 'chispa';
+    s.setAttribute('aria-hidden', 'true');
+    s.style.left = azar(); s.style.top = azar();
+    s.style.setProperty('--s', Math.round(minimo + Math.random() * (maximo - minimo)) + 'px');
+    s.style.animationDelay = (Math.random() * 3).toFixed(2) + 's';
+    s.style.animationDuration = (1.6 + Math.random() * 1.4).toFixed(2) + 's';
+    s.addEventListener('animationiteration', function(){ s.style.left = azar(); s.style.top = azar(); });
+    el.appendChild(s);
+  }
+}
+ponerBrillitos(document.querySelector('.titulo'), 24, 4, 8);
+document.querySelectorAll('.big.oro').forEach(function(el){ ponerBrillitos(el, 10, 3, 6); });
+ponerBrillitos(document.querySelector('.premio-tag'), 10, 3, 6);
+ponerBrillitos(document.querySelector('.sw-win'), 3, 3, 5);
+
+/* Rendimiento: pausa las animaciones de lo que está fuera de la pantalla */
+if ('IntersectionObserver' in window) {
+  const vigia = new IntersectionObserver(function(entradas){
+    entradas.forEach(function(en){ en.target.classList.toggle('fuera', !en.isIntersecting); });
+  }, { rootMargin: '100px' });
+  ['.hero-bg', '.meter', '.legend', '#sorteo'].forEach(function(s){ const el = $(s); if (el) vigia.observe(el); });
+}
+
+Auth.alCambiar(render);
+render(); /* muestra "Cargando…" mientras llega la información */
+if (!configCompleta) {
+  mostrarErrorConexion('config');
+} else {
+  Store.escuchar(function(datos){
+    cargado = true;
+    errorConexion = false;
+    estado = datos;
+    render();
+  }, mostrarErrorConexion);
+  setTimeout(function(){ if (!cargado) mostrarErrorConexion('lenta'); }, 12000);
+}
+})();
+</script>
+</body>
+</html>
