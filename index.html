@@ -423,22 +423,34 @@ const configCompleta = !!(CONFIG.firebase && CONFIG.firebase.apiKey && CONFIG.fi
      rifa/boletos/<número>  ->  "Nombre completo"
      rifa/ganador           ->  número del boleto ganador */
 const FIREBASE_VERSION = '12.7.0';
-let fbPromesa = null;
+let fbPromesa = null, authPromesa = null;
+/* Carga solo lo necesario para la base de datos; el inicio de sesión se carga aparte
+   para que no retrase la lista de boletos */
 function cargarFirebase(){
   if (!configCompleta) return Promise.reject(new Error('configuración incompleta'));
   if (!fbPromesa) {
     const base = 'https://www.gstatic.com/firebasejs/' + FIREBASE_VERSION + '/';
     fbPromesa = Promise.all([
       import(base + 'firebase-app.js'),
-      import(base + 'firebase-database.js'),
-      import(base + 'firebase-auth.js')
+      import(base + 'firebase-database.js')
     ]).then(function(m){
       const app = m[0].initializeApp(CONFIG.firebase);
-      return { dbm: m[1], authm: m[2], db: m[1].getDatabase(app), auth: m[2].getAuth(app) };
+      return { app: app, dbm: m[1], db: m[1].getDatabase(app) };
     });
     fbPromesa.catch(function(){ fbPromesa = null; });
   }
   return fbPromesa;
+}
+function cargarAuth(){
+  if (!authPromesa) {
+    authPromesa = cargarFirebase().then(function(f){
+      return import('https://www.gstatic.com/firebasejs/' + FIREBASE_VERSION + '/firebase-auth.js').then(function(authm){
+        return { authm: authm, auth: authm.getAuth(f.app) };
+      });
+    });
+    authPromesa.catch(function(){ authPromesa = null; });
+  }
+  return authPromesa;
 }
 /* Si una escritura no se confirma en 10 segundos, avisa en lugar de quedarse esperando */
 function conLimite(promesa, ms){
@@ -450,14 +462,41 @@ function conLimite(promesa, ms){
 function crearStoreFirebase(){
   return {
     escuchar: function(fn, alError){
+      let enVivo = false, leidoUnaVez = false, sondeo = null;
+      function convertir(v){
+        v = v || {};
+        const crudo = v.boletos || {};
+        const boletos = {};
+        Object.keys(crudo).forEach(function(k){ if (crudo[k]) boletos[k] = String(crudo[k]); });
+        return { boletos: boletos, ganador: v.ganador == null ? null : Number(v.ganador) };
+      }
+      /* Lectura directa (sin Firebase): muestra los boletos de inmediato aunque la
+         conexión en tiempo real tarde o esté bloqueada (redes de celular, navegador de Facebook) */
+      function leerDirecto(){
+        if (enVivo) return Promise.resolve();
+        const url = CONFIG.firebase.databaseURL.replace(/\/+$/, '') + '/rifa.json';
+        return conLimite(fetch(url, { cache: 'no-store' }), 10000).then(function(r){
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        }).then(function(v){
+          if (enVivo) return;
+          leidoUnaVez = true;
+          fn(convertir(v));
+        });
+      }
+      leerDirecto().catch(function(err){ console.warn('Lectura directa:', err); });
+      /* Mientras no haya conexión en tiempo real, vuelve a leer cada 15 segundos */
+      sondeo = setInterval(function(){
+        if (enVivo) { clearInterval(sondeo); return; }
+        leerDirecto().catch(function(){});
+      }, 15000);
+
       cargarFirebase().then(function(f){
         f.dbm.onValue(f.dbm.ref(f.db, 'rifa'), function(snap){
-          const v = snap.val() || {};
-          const crudo = v.boletos || {};
-          const boletos = {};
-          Object.keys(crudo).forEach(function(k){ if (crudo[k]) boletos[k] = String(crudo[k]); });
-          fn({ boletos: boletos, ganador: v.ganador == null ? null : Number(v.ganador) });
-        }, function(err){ if (alError) alError('lectura', err); });
+          enVivo = true;
+          clearInterval(sondeo);
+          fn(convertir(snap.val()));
+        }, function(err){ if (alError && !leidoUnaVez) alError('lectura', err); });
 
         /* Avisa si se pierde o se recupera la conexión */
         let estadoConexion = 'inicio';
@@ -470,7 +509,7 @@ function crearStoreFirebase(){
             aviso('Sin conexión. Reintentando…');
           }
         });
-      }).catch(function(err){ if (alError) alError('carga', err); });
+      }).catch(function(err){ if (alError && !leidoUnaVez) alError('carga', err); });
     },
     anotar: async function(n, nombre){
       const f = await cargarFirebase();
@@ -493,7 +532,7 @@ function crearStoreFirebase(){
 function crearAuthFirebase(){
   let usuario = null;
   const subs = new Set();
-  cargarFirebase().then(function(f){
+  cargarAuth().then(function(f){
     f.authm.onAuthStateChanged(f.auth, function(u){
       usuario = u;
       subs.forEach(function(fn){ fn(!!u); });
@@ -507,11 +546,11 @@ function crearAuthFirebase(){
     alCambiar: function(fn){ subs.add(fn); },
     entrar: async function(pass){
       if (!CONFIG.adminEmail) { const e = new Error('falta correo'); e.code = 'falta-correo'; throw e; }
-      const f = await cargarFirebase();
+      const f = await cargarAuth();
       await f.authm.signInWithEmailAndPassword(f.auth, CONFIG.adminEmail.trim(), pass);
     },
     salir: async function(){
-      const f = await cargarFirebase();
+      const f = await cargarAuth();
       await f.authm.signOut(f.auth);
     }
   };
